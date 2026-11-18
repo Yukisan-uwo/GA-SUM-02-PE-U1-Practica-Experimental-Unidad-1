@@ -1,35 +1,33 @@
-#BITACORA
+# Bitácora del equipo
 
-## 17 de noviembre de 2026
+**Integrantes:** Joseph [apellido] · Mera Jumbo Allison (`ameraj2-bit`) · Roger [apellido] · Mario [apellido]
 
-### Actividades realizadas
+## Formato de cada entrada
 
-- Organicé la estructura inicial del repositorio de la práctica experimental, tomando como referencia los requisitos de la rúbrica.
-- Creé las carpetas `analysis/` y `data/`, destinadas a los scripts de análisis y al almacenamiento de los resultados experimentales.
-- Organicé la carpeta `src/` con los directorios `sockets/`, `grpc/` y `proto/`, para separar los archivos de cada mecanismo de comunicación.
-- Preparé la estructura de `docs/`, incluyendo `sections/`, para mantener ordenados los archivos del informe en LaTeX.
-- Mantuve una estructura sencilla, sin agregar directorios adicionales que por ahora no son necesarios para la actividad.
-- Reparti el trabajo a mis compañeros
+### AAAA-MM-DD · Nombre de quien registra
+- **Integrantes presentes:** quiénes trabajaron en esa sesión.
+- **Commit(s):** `hash corto` — mensaje del commit.
+- **Qué se hizo:** tarea realizada.
+- **Problema encontrado:** dificultad o aspecto pendiente.
+- **Solución y comprobación:** qué se cambió y cómo se verificó que funcionó.
+- **Tiempo dedicado:** X h Y min.
 
-### Problemas o comportamientos observados
+---
 
-Al organizar el repositorio, se consideró que Git no registra carpetas vacías, por lo que era necesario conservar archivos dentro de ellas para mantener la estructura visible en GitHub.
+## Registro de trabajo
 
-### Solución y recuperación
+### 2026-11-17 · [Nombre del compañero]
+- **Integrantes presentes:** [Nombre].
+- **Commit(s):** `[hash]` — [mensaje].
+- **Qué se hizo:** Organicé la estructura inicial del repositorio según la rúbrica: `analysis/`, `data/`, `src/` (con `sockets/`, `grpc/` y `proto/`) y `docs/sections/` para el informe en LaTeX. También repartí el trabajo entre los integrantes.
+- **Problema encontrado:** Git no registra carpetas vacías, así que la estructura no se veía en GitHub.
+- **Solución y comprobación:** Agregué archivos `.gitkeep` en las carpetas vacías y verifiqué en GitHub que aparecieran.
+- **Tiempo dedicado:** 2 h 12 min.
 
-Se utilizaron archivos `.gitkeep` en los directorios vacíos para conservarlos en el repositorio mientras se desarrollan los componentes de la práctica.
-
-### Resultados obtenidos
-
-- El repositorio cuenta con una estructura inicial organizada para el desarrollo de la práctica.
-- Se encuentran separados los directorios destinados a sockets TCP, gRPC, Protocol Buffers, datos experimentales y análisis.
-- La organización permite que los integrantes trabajen en diferentes componentes sin mezclar sus archivos.
-- Queda preparada la estructura para incorporar progresivamente el código y los resultados de las pruebas.
-
-### Evidencias
-
-La organización de las carpetas y los archivos iniciales puede verificarse en el repositorio de GitHub y en el historial de commits correspondiente.
-
-### Tiempo dedicado
-
-2 horas y 12 minutos.
+### 2026-11-17 · Mera Jumbo Allison
+- **Integrantes presentes:** Mera Jumbo Allison.
+- **Commit(s):** `a3d0825` — Configura dependencias del proyecto y agrega gitignore.
+- **Qué se hizo:** Cloné el repositorio, creé el entorno virtual con Python 3.14.0 e instalé grpcio, grpcio-tools, protobuf, pandas y matplotlib. Fijé sus versiones exactas en `requirements.txt` y agregué `.gitignore` para no subir `.venv/` ni `__pycache__/`.
+- **Problema encontrado:** El `git push` falló con error 403 porque Windows tenía guardada la sesión de otra cuenta de GitHub sin permisos en el repo.
+- **Solución y comprobación:** Borré la credencial de GitHub en el Administrador de credenciales de Windows, revisé con `git log` que el commit tuviera mi correo y volví a hacer push iniciando sesión con `ameraj2-bit`. El push terminó con `main -> main`.
+- **Tiempo dedicado:** [ajústalo, más o menos 45 min].
