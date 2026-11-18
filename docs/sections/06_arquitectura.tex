@@ -1,0 +1,16 @@
+% Autoría principal: Roger; arquitectura revisada con todos.
+\subsection{Diseño de los tres nodos}
+\pendiente{Actualizar el diagrama de FORM-TL-01 con nodo-A, nodo-B, nodo-C y puertos 5000, 5001, 5002, indicando qué proceso actúa como servidor y cliente. No presentar una arquitectura propuesta como ejecutada.}
+
+\subsection{Diagrama de arquitectura (TikZ)}
+% Crear figures/arquitectura_tikz.tex desde el diagrama real FORM-TL-01.
+\IfFileExists{figures/arquitectura_tikz.tex}{%
+ \begin{figure}[htbp]\centering\input{figures/arquitectura_tikz.tex}
+ \caption{Arquitectura validada de los tres nodos (diagrama del equipo).}\label{fig:arquitectura}\end{figure}
+}{\pendiente{Crear docs/figures/arquitectura\_tikz.tex con el diagrama real basado en FORM-TL-01.}}
+
+\subsection{Modelo de mensajes y flujo de comunicación}
+\pendiente{Mostrar estructura JSON {\ttfamily\{sender, timestamp, message\}}, su equivalente Protocol Buffers, direcciones de mensajes y correlación de solicitud/respuesta.}
+
+\subsection{Ejecución y decisiones de despliegue}
+\pendiente{Explicar si se ejecutan procesos en localhost o contenedores Docker, y cómo se evitan conflictos de puertos cuando se comparan los dos mecanismos.}

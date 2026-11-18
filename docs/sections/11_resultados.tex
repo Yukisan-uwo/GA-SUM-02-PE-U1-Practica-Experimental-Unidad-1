@@ -1,0 +1,25 @@
+% Autoría principal: Mario. Todo número debe surgir del script en /analysis/.
+\subsection{Estadísticas descriptivas por mecanismo y tamaño}
+\pendiente{El script de análisis debe generar una tabla LaTeX con media, mediana, desviación estándar, P95 y unidades. NO completar cifras a mano.}
+\IfFileExists{tablas/estadisticas.tex}{\input{tablas/estadisticas.tex}}%
+{\pendiente{Pendiente de generar automáticamente: docs/tablas/estadisticas.tex.}}
+
+\subsection{Rendimiento: mensajes por segundo}
+\pendiente{Incluir tabla automática de throughput y definición del intervalo temporal empleado.}
+\IfFileExists{tablas/rendimiento.tex}{\input{tablas/rendimiento.tex}}%
+{\pendiente{Pendiente de generar automáticamente: docs/tablas/rendimiento.tex.}}
+
+\subsection{Gráfico de cajas de latencias}
+\IfFileExists{figures/boxplot.png}{%
+\begin{figure}[htbp]\centering\includegraphics[width=0.9\linewidth]{figures/boxplot.png}
+\caption{Distribución de latencias por mecanismo y tamaño, generada desde los CSV reales.}\label{fig:boxplot}\end{figure}
+}{\pendiente{Generar automáticamente docs/figures/boxplot.png con matplotlib, a 300 DPI.}}
+
+\subsection{Gráfico de barras con intervalos}
+\IfFileExists{figures/barras_intervalos.png}{%
+\begin{figure}[htbp]\centering\includegraphics[width=0.9\linewidth]{figures/barras_intervalos.png}
+\caption{Comparación de latencias e intervalos definidos por el script de análisis.}\label{fig:barras}\end{figure}
+}{\pendiente{Generar automáticamente docs/figures/barras\_intervalos.png e indicar si los intervalos son de confianza, desviación o dispersión.}}
+
+\subsection{Comportamiento durante la concurrencia}
+\pendiente{Añadir observaciones y mediciones auténticas de los tres clientes enviando a la vez.}

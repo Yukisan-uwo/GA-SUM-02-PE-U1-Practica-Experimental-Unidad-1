@@ -1,0 +1,152 @@
+% PLANTILLA DE TRABAJO -- NO ES UN INFORME TERMINADO
+% Código de actividad según encuadre: GA-SUM-01 / PE-U1
+% Para convertir en documento definitivo:
+%  1) Completar y verificar los textos de /sections/.
+%  2) Incorporar resultados y figuras procedentes de ejecuciones reales.
+%  3) Verificar cada cita incluida en referencias.bib.
+%  4) Desactivar modoBorrador solo al concluir y revisar el documento.
+\documentclass[11pt,a4paper,oneside]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[spanish,es-tabla]{babel}
+\usepackage{newtxtext,newtxmath} % Tipo de letra estilo Times compatible con pdfLaTeX
+\usepackage[a4paper,left=3cm,right=3cm,top=2.5cm,bottom=2.5cm]{geometry}
+\usepackage{setspace}
+\setstretch{1.2}
+\usepackage{microtype}
+\usepackage{amsmath}
+\usepackage{graphicx,booktabs,tabularx,array}
+\usepackage{xcolor}
+\usepackage{tikz}
+\usetikzlibrary{arrows.meta,positioning,shapes.geometric}
+\usepackage{listings}
+\usepackage{csquotes}
+\usepackage[backend=biber,style=ieee,citestyle=numeric,sorting=none]{biblatex}
+\addbibresource{referencias.bib}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage{xurl}
+\usepackage{hyperref}
+
+\definecolor{azulUTEQ}{HTML}{183C60}
+\definecolor{grisNota}{HTML}{666666}
+\hypersetup{colorlinks=true,linkcolor=azulUTEQ,citecolor=azulUTEQ,urlcolor=azulUTEQ,pdftitle={Práctica experimental U1: sockets TCP, gRPC y Lamport}}
+\lstdefinestyle{codigo}{
+ basicstyle=\ttfamily\footnotesize,
+ breaklines=true,
+ frame=single,
+ numbers=left,
+ numberstyle=\tiny,
+ showstringspaces=false,
+ tabsize=4,
+ captionpos=b
+}
+\lstset{style=codigo}
+
+\newif\ifmodoBorrador
+\modoBorradortrue % Cambiar por \modoBorradorfalse SOLO en la entrega final
+\newcommand{\pendiente}[1]{%
+  \par\smallskip\noindent{\color{grisNota}\textbf{[PENDIENTE]} #1}\par\smallskip
+}
+\pagestyle{fancy}
+\fancyhf{}
+\fancyhead[L]{\footnotesize GA-SUM-01 / PE-U1}
+\fancyhead[R]{\ifmodoBorrador\footnotesize\textcolor{red!70!black}{BORRADOR / NO ENTREGAR}\fi}
+\fancyfoot[C]{\thepage\ de \pageref{LastPage}}
+\setlength{\headheight}{15pt}
+\renewcommand{\headrulewidth}{0.4pt}
+
+\begin{document}
+\hypersetup{pageanchor=false}
+\begin{titlepage}
+\centering
+{\Large\textbf{UNIVERSIDAD TÉCNICA ESTATAL DE QUEVEDO}}\\[0.45cm]
+{\large Facultad de Ciencias de la Computación}\\[0.15cm]
+{\large Carrera de Software}\\[1.35cm]
+{\LARGE\bfseries PRÁCTICA EXPERIMENTAL -- UNIDAD 1}\\[0.3cm]
+{\Large Comunicación entre procesos mediante sockets TCP y gRPC}\\[0.25cm]
+{\large Verificación con relojes lógicos de Lamport}\\[1.3cm]
+\begin{tabular}{@{}ll@{}}
+\textbf{Asignatura:} & Aplicaciones Distribuidas \\
+\textbf{Código de actividad:} & GA-SUM-01 / PE-U1 \\
+\textbf{Nivel / paralelo:} & Séptimo nivel / A \\
+\textbf{Modalidad:} & Grupal \\
+\textbf{Docente:} & Gleiston Cicerón Guerrero Ulloa \\
+\textbf{Fecha límite:} & 22 de noviembre de 2026 \\
+\end{tabular}
+\\[1.0cm]
+{\large\textbf{Integrantes}}\\[0.25cm]
+Joseph \textcolor{grisNota}{(apellidos por completar)}\\[0.12cm]
+Mera \textcolor{grisNota}{(nombre completo por confirmar)}\\[0.12cm]
+Roger \textcolor{grisNota}{(apellidos por completar)}\\[0.12cm]
+Mario \textcolor{grisNota}{(apellidos por completar)}
+\vfill
+\textbf{Repositorio público:}\\[0.1cm]
+{\scriptsize\href{https://github.com/Yukisan-uwo/GA-SUM-02-PE-U1-Practica-Experimental-Unidad-1}{\nolinkurl{https://github.com/Yukisan-uwo/GA-SUM-02-PE-U1-Practica-Experimental-Unidad-1}}}
+\\[0.7cm]
+{\small Quevedo, Ecuador -- noviembre de 2026}
+\end{titlepage}
+
+\hypersetup{pageanchor=true}
+\pagenumbering{roman}
+\input{sections/00_resumen}
+\tableofcontents
+\clearpage
+\pagenumbering{arabic}
+
+\section{Objetivos e hipótesis}
+\input{sections/01_objetivos_hipotesis}
+
+\section{Fundamentación teórica de la Unidad 1}
+\input{sections/02_fundamentos_distribuidos}
+\input{sections/03_fundamentos_comunicacion}
+\input{sections/04_fundamentos_lamport}
+\input{sections/05_fundamentos_fallos}
+
+\section{Arquitectura del sistema distribuido}
+\input{sections/06_arquitectura}
+
+\section{Implementación}
+\input{sections/07_implementacion_tcp}
+\input{sections/08_implementacion_grpc}
+\input{sections/09_implementacion_lamport}
+
+\section{Protocolo experimental}
+\input{sections/10_protocolo_experimental}
+
+\section{Resultados de las mediciones}
+\input{sections/11_resultados}
+
+\section{Discusión y análisis crítico}
+\input{sections/12_discusion}
+
+\section{Verificación del reloj de Lamport}
+\input{sections/13_verificacion_lamport}
+
+\section{Conclusiones}
+\input{sections/14_conclusiones}
+
+\section{Tabla de aportes de los integrantes}
+\input{sections/15_aportes}
+
+\section{Declaración de uso de inteligencia artificial}
+\input{sections/16_declaracion_ia}
+
+\section{Evidencias y reproducibilidad}
+\input{sections/17_evidencias}
+
+% REFERENCIAS: NO incluir referencias sin consulta y comprobación directas.
+\clearpage
+\section*{Referencias bibliográficas}
+\addcontentsline{toc}{section}{Referencias bibliográficas}
+\ifmodoBorrador
+\pendiente{Incorporar mínimo 6 referencias reales verificadas en referencias.bib y citarlas con \texttt{\textbackslash cite\{clave\}}. Al menos dos artículos deben ser indexados, recientes y con DOI comprobado.}
+\fi
+\printbibliography[heading=none]
+
+\appendix
+\section{Preguntas de análisis obligatorias de la guía experimental}
+\input{sections/18_anexos_preguntas}
+
+\end{document}
