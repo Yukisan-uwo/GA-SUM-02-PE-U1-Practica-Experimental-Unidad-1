@@ -1,6 +1,6 @@
 # Bitácora del equipo
 
-**Integrantes:** Joseph [apellido] · Mera Jumbo Allison (`ameraj2-bit`) · Roger [apellido] · Mario [apellido]
+**Integrantes:** Joseph [apellido] · Mera Jumbo Allison (`ameraj2-bit`) · Roger [apellido] · Mario Zambrano (`Yukisan-uwo`)
 
 ## Formato de cada entrada
 
@@ -16,10 +16,10 @@
 
 ## Registro de trabajo
 
-### 2026-11-17 · [Nombre del compañero]
-- **Integrantes presentes:** [Nombre].
-- **Commit(s):** `[hash]` — [mensaje].
-- **Qué se hizo:** Organicé la estructura inicial del repositorio según la rúbrica: `analysis/`, `data/`, `src/` (con `sockets/`, `grpc/` y `proto/`) y `docs/sections/` para el informe en LaTeX. También repartí el trabajo entre los integrantes.
+### 2026-11-17 · Mario Zambrano
+- **Integrantes presentes:** Mario Zambrano.
+- **Commit(s):** `cf7cf95` — Estructura inicial para el documento latex, `443c61e` — Creacion de archivo para los requerimientos, `524499e` — Carpeta para los CSV y SHA256SUMS, `4ae980a` — Creacion de carpeta para codigo, `0cad7fe` — Creacion de carpeta para codigo, `70efbe7` — Creacion de carpeta para codigo, `57bcab3` — Creacion de carpeta para el analisis, `9aaf256` — Creacion de Bitacora.
+- **Qué se hizo:** Organicé la estructura inicial del repositorio según la rúbrica: `analysis/`, `data/`, `src/` (con `sockets/`, `grpc/` y `proto/`) y `docs/sections/` para el informe en LaTeX, deje la plantilla del documento latex para saber que hacer y seguir segun la rúbrica, y deje la plantilla para la Bitacora. También repartí el trabajo entre los integrantes.
 - **Problema encontrado:** Git no registra carpetas vacías, así que la estructura no se veía en GitHub.
 - **Solución y comprobación:** Agregué archivos `.gitkeep` en las carpetas vacías y verifiqué en GitHub que aparecieran.
 - **Tiempo dedicado:** 2 h 12 min.
