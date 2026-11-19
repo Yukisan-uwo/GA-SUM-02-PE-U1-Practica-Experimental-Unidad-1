@@ -39,3 +39,13 @@
 - **Problema encontrado:** Los clientes TCP y gRPC todavía no están implementados, por lo que no es posible obtener las latencias reales.
 - **Solución y comprobación:** Dejé preparado el planificador y comprobé que funciona con diferentes parámetros. También verifiqué que rechaza una configuración de cuatro repeticiones, ya que la rúbrica exige un mínimo de cinco.
 - **Tiempo dedicado:** 53 minutos.
+
+### 2026-11-18 · Mera Jumbo Allison
+- **Integrantes presentes:** Mera Jumbo Allison.
+- **Commit(s):**
+  - `bbe177f` — Define servicio MessagingService en messaging.proto y genera codigo Python.
+  - `cc48b85` — Implementa servidor gRPC por nodo con reloj Lamport.
+- **Qué se hizo:** Acordé con Joseph el contrato común entre TCP y gRPC (campos de la solicitud y del acuse, conexión reutilizada, timeout de 2 s e interfaz `conectar/enviar/cerrar`). Creé `src/grpc/messaging.proto` con el servicio `MessagingService` y los mensajes `Request` y `Response`, y generé el código Python con `grpcio-tools`. Comprobé que un `Request` serializado ocupa 16 bytes. Después implementé `server_grpc.py`: cada nodo levanta su servidor gRPC en su puerto (5000, 5001 o 5002), actualiza el reloj de Lamport al recibir y responde con el acuse. Lo probé enviándole al nodo-A dos mensajes con timestamp 5, y el reloj pasó a 6 y luego a 7. Por ahora el servidor usa un reloj provisional hasta que Roger suba su módulo.
+- **Problema encontrado:** La guía en PDF pide el `.proto` en `/src/grpc/` y el texto del SGA lo pide en `/proto/`, mientras que el repo tenía `src/proto/`. También, el comando `code .`
+- **Solución y comprobación:** El equipo decidió seguir la guía y dejar el archivo en `src/grpc/messaging.proto`. 
+- **Tiempo dedicado:** 1 hora.
