@@ -59,3 +59,15 @@
 - **Qué se hizo:** Subí el servidor, el cliente y el registro CSV de TCP. Probé 20 intercambios con mensajes de 100 bytes y guardé la captura en `docs/evidencias/Joseph/`.
 - **comprobación:** Inicié el servidor en una ventana aparte y repetí la prueba. Los 20 mensajes recibieron acuse `ok: True`. La ejecución fue una prueba funcional con `--run 0`, no una medición oficial del benchmark.
 - **Tiempo dedicado:**  30 minutos
+
+
+### 2026-11-19 · Mera Jumbo Allison
+- **Integrantes presentes:** Mera Jumbo Allison.
+- **Commit(s):**
+  - `f42cc78` — Integra reloj Lamport compartido y registro CSV en servidor gRPC.
+  - `4c04d92` — Implementa cliente gRPC con interfaz comun y medicion de latencia.
+  - `baa84cb` — Agrega evidencias de 20 intercambios gRPC y prueba de nodo caido.
+- **Qué se hizo:** Reemplacé el reloj provisional del servidor por el `LamportClock` de Roger. Hice que el envío del acuse cuente como evento nuevo (receive y luego tick), igual que en TCP, y agregué `registro_grpc.py` para guardar eventos y latencias en CSV con las mismas columnas que TCP. Implementé `client_grpc.py` con la misma interfaz que el cliente TCP (`conectar/enviar/cerrar`). Ejecuté 20 intercambios nodo-A → nodo-B con mensajes de 100 bytes y la secuencia de relojes coincidió con la de TCP (acuse final 79, reloj local 80). También probé enviar a un nodo apagado (nodo-C) y el cliente avisó que no pudo conectar, mientras el nodo-B seguía respondiendo.
+- **Problema encontrado:** Al probar el servidor seguía saliendo el comportamiento anterior (respondía 6 en lugar de 7), y en la primera corrida de los 20 intercambios el cliente no pudo conectar.
+- **Solución y comprobación:** El archivo no estaba guardado en VS Code (tenía el punto en la pestaña). Lo guardé, reinicié el servidor y respondió 7. En el segundo caso, el servidor del nodo-B no estaba encendido; lo levanté y los 20 envíos terminaron con `ok: True`. Validé además que un timestamp negativo devuelve `INVALID_ARGUMENT` sin tumbar el servidor.
+- **Tiempo dedicado:** 45 min.
