@@ -1,6 +1,6 @@
 # Bitácora del equipo
 
-**Integrantes:** Joseph [apellido] · Mera Jumbo Allison (`ameraj2-bit`) · Roger [apellido] · Mario Zambrano (`Yukisan-uwo`)
+**Integrantes:** Joseph (`JosephACS`) · Mera Jumbo Allison (`ameraj2-bit`) · Roger [apellido] · Mario Zambrano (`Yukisan-uwo`)
 
 ## Formato de cada entrada
 
@@ -49,3 +49,13 @@
 - **Problema encontrado:** La guía en PDF pide el `.proto` en `/src/grpc/` y el texto del SGA lo pide en `/proto/`, mientras que el repo tenía `src/proto/`. También, el comando `code .`
 - **Solución y comprobación:** El equipo decidió seguir la guía y dejar el archivo en `src/grpc/messaging.proto`. 
 - **Tiempo dedicado:** 1 hora.
+
+### 2026-11-18 · Joseph Calderón Saltos
+- **Integrantes presentes:** Joseph Calderón Saltos.
+- **Commit(s):**
+  - `3f1ae82` — Implemento comunicación TCP y registro de eventos.
+  - `e89de69` — Create tcp_20_intercambios_2026-11-18.png.
+  - `1be2d16` — Agrega evidencia de 20 intercambios TCP exitosos.
+- **Qué se hizo:** Subí el servidor, el cliente y el registro CSV de TCP. Probé 20 intercambios con mensajes de 100 bytes y guardé la captura en `docs/evidencias/Joseph/`.
+- **comprobación:** Inicié el servidor en una ventana aparte y repetí la prueba. Los 20 mensajes recibieron acuse `ok: True`. La ejecución fue una prueba funcional con `--run 0`, no una medición oficial del benchmark.
+- **Tiempo dedicado:**  30 minutos
