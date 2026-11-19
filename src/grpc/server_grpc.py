@@ -1,69 +1,86 @@
-"""Servidor gRPC de un nodo (nodo-A, nodo-B o nodo-C)."""
+"""Servidor gRPC de un nodo (nodo-A, nodo-B o nodo-C).
+
+Ejecutar desde la raiz del repositorio:
+    python src/grpc/server_grpc.py nodo-B
+"""
 import argparse
+import sys
 import threading
 import time
 from concurrent import futures
-from datetime import datetime
+from pathlib import Path
 
 import grpc
 
 import messaging_pb2
 import messaging_pb2_grpc
+from registro_grpc import registrar_evento
+
+# Se agrega la raiz del repo al path para usar el reloj compartido de Roger.
+RAIZ = Path(__file__).resolve().parents[2]
+if str(RAIZ) not in sys.path:
+    sys.path.insert(0, str(RAIZ))
+from src.common.lamport import LamportClock  # noqa: E402
 
 PUERTOS = {"nodo-A": 5000, "nodo-B": 5001, "nodo-C": 5002}
 
 
-class RelojTemporal:
-    """Reloj de Lamport provisional, se reemplaza por el modulo de Roger."""
-
-    def __init__(self):
-        self.valor = 0
-        self._lock = threading.Lock()
-
-    def enviar(self):
-        with self._lock:
-            self.valor += 1
-            return self.valor
-
-    def recibir(self, recibido):
-        with self._lock:
-            self.valor = max(self.valor, recibido) + 1
-            return self.valor
-
-
 class MessagingServicer(messaging_pb2_grpc.MessagingServiceServicer):
-    def __init__(self, nombre, reloj, mostrar=True):
+    def __init__(self, nombre, reloj, silencioso=False):
         self.nombre = nombre
         self.reloj = reloj
-        self.mostrar = mostrar
+        self.silencioso = silencioso
+        # Numero de mensaje por conexion y emisor, igual que en TCP,
+        # para que el id_mensaje coincida con el del cliente.
+        self.contadores = {}
+        self.candado = threading.Lock()
+
+    def _siguiente_id(self, peer, sender):
+        with self.candado:
+            clave = (peer, sender)
+            self.contadores[clave] = self.contadores.get(clave, 0) + 1
+            return f"{sender}-{self.contadores[clave]:06d}"
 
     def EnviarMensaje(self, request, context):
-        nuevo = self.reloj.recibir(request.timestamp)
-        if self.mostrar:
-            hora = datetime.now().strftime("%H:%M:%S.%f")[:-3]
-            print(f"[{self.nombre}] {hora} recepcion de {request.sender} "
-                  f"ts={request.timestamp} -> reloj={nuevo} "
-                  f"({len(request.message)} bytes)")
-        return messaging_pb2.Response(receiver=self.nombre, timestamp=nuevo, ok=True)
+        try:
+            ts_recepcion = self.reloj.receive(request.timestamp)
+        except (TypeError, ValueError) as error:
+            context.abort(grpc.StatusCode.INVALID_ARGUMENT, str(error))
+
+        id_mensaje = self._siguiente_id(context.peer(), request.sender)
+        if not self.silencioso:
+            registrar_evento(self.nombre, "recepcion_solicitud", ts_recepcion,
+                             id_mensaje, request.sender, self.nombre)
+            print(f"RECEPCION {request.sender} -> {self.nombre}: reloj={ts_recepcion}, "
+                  f"bytes={len(request.message.encode('utf-8'))}")
+
+        # Enviar el acuse es un evento nuevo, por eso se incrementa el reloj.
+        ts_acuse = self.reloj.tick()
+        if not self.silencioso:
+            registrar_evento(self.nombre, "envio_acuse", ts_acuse,
+                             id_mensaje, self.nombre, request.sender)
+            print(f"ENVIO_ACUSE {self.nombre} -> {request.sender}: reloj={ts_acuse}")
+
+        return messaging_pb2.Response(receiver=self.nombre, timestamp=ts_acuse, ok=True)
 
 
-def iniciar_servidor(nombre, reloj, mostrar=True):
+def iniciar_servidor(nombre, reloj, silencioso=False):
     servidor = grpc.server(futures.ThreadPoolExecutor(max_workers=10))
     messaging_pb2_grpc.add_MessagingServiceServicer_to_server(
-        MessagingServicer(nombre, reloj, mostrar), servidor)
+        MessagingServicer(nombre, reloj, silencioso), servidor)
     servidor.add_insecure_port(f"127.0.0.1:{PUERTOS[nombre]}")
     servidor.start()
     return servidor
 
 
 def main():
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(description="Servidor gRPC de la PE-U1")
     parser.add_argument("nodo", choices=list(PUERTOS))
     parser.add_argument("--silencioso", action="store_true",
-                        help="no imprime cada mensaje (para medir latencia)")
+                        help="no imprime ni registra eventos (para medir latencia)")
     args = parser.parse_args()
 
-    servidor = iniciar_servidor(args.nodo, RelojTemporal(), not args.silencioso)
+    servidor = iniciar_servidor(args.nodo, LamportClock(), args.silencioso)
     print(f"[{args.nodo}] servidor gRPC escuchando en 127.0.0.1:{PUERTOS[args.nodo]}")
     try:
         while True:
