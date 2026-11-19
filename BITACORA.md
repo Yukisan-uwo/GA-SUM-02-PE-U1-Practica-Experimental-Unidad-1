@@ -31,3 +31,11 @@
 - **Problema encontrado:** El `git push` falló con error 403 porque Windows tenía guardada la sesión de otra cuenta de GitHub sin permisos en el repo.
 - **Solución y comprobación:** Borré la credencial de GitHub en el Administrador de credenciales de Windows, revisé con `git log` que el commit tuviera mi correo y volví a hacer push iniciando sesión con `ameraj2-bit`. El push terminó con `main -> main`.
 - **Tiempo dedicado:** 45 min.
+
+### 2026-11-18 · Mario Zambrano
+- **Integrantes presentes:** Mario Zambrano.
+- **Commit(s):** `b8c215e` — Implemente una configuracion inicial del benchmark.
+- **Qué se hizo:** Implementé la configuración inicial del benchmark para las pruebas de sockets TCP y gRPC. Definí los tamaños de mensaje, la cantidad de envíos, las repeticiones y el calentamiento. Ejecuté pruebas desde PowerShell para comprobar la planificación de las 2000 mediciones y la selección individual de gRPC con mensajes de 10 KB.
+- **Problema encontrado:** Los clientes TCP y gRPC todavía no están implementados, por lo que no es posible obtener las latencias reales.
+- **Solución y comprobación:** Dejé preparado el planificador y comprobé que funciona con diferentes parámetros. También verifiqué que rechaza una configuración de cuatro repeticiones, ya que la rúbrica exige un mínimo de cinco.
+- **Tiempo dedicado:** 53 minutos.
