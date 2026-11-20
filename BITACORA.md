@@ -98,3 +98,12 @@
 - **Problema encontrado:** Ningun problema.
 - **Solución y comprobación:** Todo bien.
 - **Tiempo dedicado:** 32 minutos.
+
+### 2026-11-20 · Mario Zambrano
+
+- **Integrantes presentes:** Mario Zambrano.
+- **Commit(s):** `a33f110` — Benchmark real y analisis estadistico TCP gRPC.
+- **Qué se hizo:** Ejecuté las mediciones de latencia y rendimiento de los clientes TCP y gRPC utilizando el benchmark desarrollado anteriormente. Para cada mecanismo se realizaron cinco corridas de 100 envíos con mensajes de 100 y 10240 bytes, descartando una corrida previa de calentamiento por tamaño. En total se obtuvieron 2000 mediciones válidas, sin acuses fallidos ni tiempos RTT inválidos. Después desarrollé y ejecuté `analysis/analisis_resultados.py` para calcular la media, mediana, desviación estándar, percentil 95 y rendimiento a partir de los CSV originales. Los resultados mostraron una latencia media de 0,122 y 0,197 ms para TCP, frente a 0,547 y 0,564 ms para gRPC, respectivamente. También se generaron automáticamente las tablas LaTeX y los gráficos de cajas y barras con intervalos. Guardé las capturas de ejecución y registré los hashes SHA-256 de los cuatro CSV consolidados.
+- **Problema encontrado:** Al revisar las tablas generadas, algunos caracteres acentuados aparecían incorrectamente en la terminal de PowerShell. Además, fue necesario distinguir los CSV oficiales de los registros automáticos producidos por los clientes durante las pruebas preliminares.
+- **Solución y comprobación:** Verifiqué mediante Python que las tablas estaban correctamente codificadas en UTF-8. Comprobé también que cada condición experimental contenía 500 mediciones, distribuidas en cinco corridas de 100 envíos. El script confirmó la validez de los 2000 registros y generó los resultados sin modificar los archivos originales. Finalmente, creé `data/SHA256SUMS` y verifiqué que los cuatro archivos consolidados coincidieran con sus hashes. Los registros adicionales de eventos y latencias permanecen conservados para las pruebas pendientes.
+- **Tiempo dedicado:** 1 hora 5 minutos.
