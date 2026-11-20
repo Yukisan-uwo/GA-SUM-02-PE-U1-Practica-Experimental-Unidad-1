@@ -1,11 +1,23 @@
 % Autoría principal: Joseph; respaldar con archivos REALES.
+
 \subsection{Implementación con sockets TCP}
-\pendiente{Explicar servidor, tres clientes/nodos, protocolo JSON, delimitación de mensajes, control de errores y registro de eventos. Referenciar src/sockets/server.py y client.py.}
+
+En la prueba local, \texttt{nodo-A} envía solicitudes a \texttt{nodo-B}, que escucha en \texttt{127.0.0.1:5001}. El cliente abre una conexión TCP y la reutiliza para los mensajes de la corrida. Cada solicitud contiene \texttt{sender}, \texttt{timestamp} y \texttt{message} en un objeto JSON codificado en UTF-8. Como TCP entrega un flujo de bytes, el programa añade un salto de línea para separar los mensajes. El servidor lee cada línea, valida sus campos y responde con \texttt{receiver}, \texttt{timestamp} y \texttt{ok} \cite{eddy2022tcp,bray2017json}.
+
+El cliente mide el tiempo desde que empieza a escribir la solicitud hasta que recibe el acuse. El código registra los eventos de cada nodo en archivos CSV y añade las latencias a \texttt{data/latencias\_tcp.csv}. También usa un límite de espera de dos segundos. La prueba que tenemos documentada es entre \texttt{nodo-A} y \texttt{nodo-B}; no la describimos como una prueba de los tres nodos.
 
 \subsubsection{Fragmento representativo de código TCP}
-\pendiente{Insertar un fragmento BREVE, copiado del código real, mediante listings o lstinputlisting (no pseudocódigo presentado como implementación).}
-% Ejemplo cuando exista el archivo real, ajustando ruta de compilación:
-% \lstinputlisting[language=Python,firstline=1,lastline=18,caption={...}]{../src/sockets/server.py}
+
+El cliente prepara la solicitud, registra el envío y espera el acuse por la misma conexión:
+
+\begin{lstlisting}[language=Python,caption={Envío de una solicitud TCP y recepción del acuse}]
+request = {"sender": sender, "timestamp": self.clock.tick(), "message": message}
+append_event(sender, "envio_solicitud", request["timestamp"], message_id, sender, destination)
+started = time.perf_counter()
+self.writer.write(json.dumps(request, ensure_ascii=False, separators=(",", ":")) + "\n")
+self.writer.flush()
+response = receive_json_line(self.reader)
+\end{lstlisting}
 
 \subsubsection{Ejecución de 20 intercambios y registro de eventos}
-\pendiente{Describir los 20 intercambios reales y relacionarlos con el CSV/JSON de eventos de TCP.}
+\pendiente{Agregar el CSV generado por la corrida y describir los 20 intercambios con sus datos observados.}
