@@ -91,4 +91,10 @@
 - **Solución y comprobación:** Contrasté la descripción con los archivos actuales del cliente y el servidor. Dejé la parte de los 20 intercambios para completarla cuando se incorpore el CSV y se confirme la regla del reloj.
 - **Tiempo dedicado:** 35 minutos.
 
-
+### 2026-11-20 · Mario Zambrano
+- **Integrantes presentes:** Mario Zambrano.
+- **Commit(s):** `5903b17` — Objetivos e hipotesis previa al benchmark.
+- **Qué se hizo:** Redacté los objetivos generales y específicos de la práctica, tomando en cuenta los requisitos del experimento con sockets TCP, gRPC y relojes de Lamport. También establecí la hipótesis de que TCP podría presentar una menor latencia media que gRPC en localhost, considerando mensajes de 100 bytes y 10 KB. Para fundamentarla, utilicé las características de las implementaciones desarrolladas por el equipo y referencias bibliográficas incluidas en `referencias.bib`. La hipótesis quedó registrada en el repositorio antes de ejecutar las mediciones oficiales.
+- **Problema encontrado:** Ningun problema.
+- **Solución y comprobación:** Todo bien.
+- **Tiempo dedicado:** 32 minutos.
