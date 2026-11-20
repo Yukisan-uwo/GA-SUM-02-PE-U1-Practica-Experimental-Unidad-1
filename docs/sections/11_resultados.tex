@@ -1,25 +1,156 @@
-% Autoría principal: Mario. Todo número debe surgir del script en /analysis/.
+
+% Autoría principal: Mario Zambrano.
+
 \subsection{Estadísticas descriptivas por mecanismo y tamaño}
-\pendiente{El script de análisis debe generar una tabla LaTeX con media, mediana, desviación estándar, P95 y unidades. NO completar cifras a mano.}
-\IfFileExists{tablas/estadisticas.tex}{\input{tablas/estadisticas.tex}}%
-{\pendiente{Pendiente de generar automáticamente: docs/tablas/estadisticas.tex.}}
+
+Se analizaron 2000 mediciones de latencia RTT, distribuidas
+entre TCP y gRPC con mensajes de 100 y 10240 bytes.
+Para cada combinación se realizaron cinco corridas
+de 100 envíos, obteniendo 500 mediciones por caso.
+
+A partir de los archivos CSV se calcularon la media,
+mediana, desviación estándar y percentil 95 (P95).
+Estos cálculos se realizaron mediante el script
+\texttt{analisis\_resultados.py}, utilizando pandas.
+Los resultados se muestran en la
+Tabla~\ref{tab:estadisticas_rtt}.
+
+\input{tablas/estadisticas.tex}
+
+En las pruebas realizadas, TCP presentó una latencia
+media menor que gRPC con los dos tamaños de mensaje.
+Lo mismo ocurrió con las medianas y los valores del
+percentil 95.
+
+Al aumentar el tamaño del mensaje de 100 a 10240 bytes,
+la latencia media también aumentó en ambos casos.
+Este cambio fue mayor en TCP, mientras que en gRPC
+la diferencia entre los dos tamaños fue más pequeña.
+
+También se encontraron diferencias en la dispersión
+de los tiempos. gRPC registró una desviación estándar
+mayor que TCP, especialmente con mensajes de 100 bytes.
+Esto indica que sus tiempos de respuesta fueron menos
+uniformes durante las pruebas.
+
+Las posibles razones de estas diferencias se
+analizarán en la sección de discusión.
 
 \subsection{Rendimiento: mensajes por segundo}
-\pendiente{Incluir tabla automática de throughput y definición del intervalo temporal empleado.}
-\IfFileExists{tablas/rendimiento.tex}{\input{tablas/rendimiento.tex}}%
-{\pendiente{Pendiente de generar automáticamente: docs/tablas/rendimiento.tex.}}
+
+Además de medir la latencia, se calculó cuántos mensajes
+podía procesar cada implementación por segundo.
+Para ello, se dividió la cantidad de mensajes
+confirmados entre el tiempo total de cada corrida.
+
+En la Tabla~\ref{tab:rendimiento} se presentan
+los promedios de rendimiento y sus desviaciones
+estándar, calculados a partir de las cinco
+corridas realizadas para cada caso.
+
+\input{tablas/rendimiento.tex}
+
+TCP obtuvo un rendimiento medio superior al de gRPC
+con ambos tamaños de mensaje. También se observó
+que el número de mensajes procesados por segundo
+disminuyó al utilizar la carga de 10240 bytes.
+
+En cuanto a la variación entre corridas, TCP con
+mensajes de 100 bytes presentó los resultados más
+uniformes. Por su parte, gRPC registró diferencias
+mayores entre las repeticiones.
+
+Es importante aclarar que el rendimiento y el RTT
+no se calculan de la misma manera. El rendimiento
+considera el tiempo completo de cada corrida,
+incluyendo las operaciones de registro realizadas
+por el cliente. Por eso, no se obtiene simplemente
+dividiendo uno entre la latencia media.
 
 \subsection{Gráfico de cajas de latencias}
-\IfFileExists{figures/boxplot.png}{%
-\begin{figure}[htbp]\centering\includegraphics[width=0.9\linewidth]{figures/boxplot.png}
-\caption{Distribución de latencias por mecanismo y tamaño, generada desde los CSV reales.}\label{fig:boxplot}\end{figure}
-}{\pendiente{Generar automáticamente docs/figures/boxplot.png con matplotlib, a 300 DPI.}}
+
+Para observar mejor la distribución de los tiempos,
+se generó el diagrama de cajas de la
+Figura~\ref{fig:boxplot}. Este gráfico permite
+comparar las medianas, la dispersión y los
+valores atípicos de las mediciones.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\linewidth]
+    {figures/boxplot.png}
+    \caption{Distribución de las latencias RTT de
+    TCP y gRPC con mensajes de 100 bytes y 10 KiB.
+    Gráfico generado a partir de los CSV originales.}
+    \label{fig:boxplot}
+\end{figure}
+
+Como se observa en el gráfico, los tiempos de TCP
+se concentran en valores más bajos que los de gRPC.
+También se aprecia que las mediciones de gRPC
+presentan una mayor dispersión, principalmente
+con mensajes de 100 bytes.
+
+En esta última condición aparecen algunos valores
+atípicos que se alejan del resto de las mediciones.
+Se decidió conservarlos porque forman parte de
+los datos obtenidos durante la ejecución.
+Por tanto, también se consideraron en los
+cálculos estadísticos.
+
+El gráfico permite identificar estas diferencias,
+pero no es suficiente para determinar qué provocó
+cada aumento de latencia.
 
 \subsection{Gráfico de barras con intervalos}
-\IfFileExists{figures/barras_intervalos.png}{%
-\begin{figure}[htbp]\centering\includegraphics[width=0.9\linewidth]{figures/barras_intervalos.png}
-\caption{Comparación de latencias e intervalos definidos por el script de análisis.}\label{fig:barras}\end{figure}
-}{\pendiente{Generar automáticamente docs/figures/barras\_intervalos.png e indicar si los intervalos son de confianza, desviación o dispersión.}}
 
-\subsection{Comportamiento durante la concurrencia}
-\pendiente{Añadir observaciones y mediciones auténticas de los tres clientes enviando a la vez.}
+La Figura~\ref{fig:barras} muestra una comparación
+de la latencia media para los dos mecanismos y
+los dos tamaños de mensaje.
+
+Cada barra representa el promedio de las cinco
+medias obtenidas por corrida. Las líneas verticales
+indican una desviación estándar por encima y por
+debajo de ese promedio, calculada entre las
+cinco corridas.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.85\linewidth]
+    {figures/barras_intervalos.png}
+    \caption{Comparación de las latencias medias.
+    Los intervalos representan $\pm 1$ desviación
+    estándar entre las cinco corridas y no son
+    intervalos de confianza del 95\%.}
+    \label{fig:barras}
+\end{figure}
+
+En el gráfico se puede observar que TCP mantuvo
+una latencia media inferior a gRPC con los dos
+tamaños de mensaje.
+
+Las líneas de dispersión muestran que los tiempos
+no fueron exactamente iguales en todas las
+corridas. Esto se aprecia especialmente en gRPC
+con mensajes de 100 bytes, donde hubo una mayor
+diferencia entre las medias de las repeticiones.
+
+Estos intervalos sirven para mostrar cuánto
+variaron los resultados entre corridas.
+No se utilizaron para realizar una prueba
+de significación estadística.
+
+\subsection{Alcance de los resultados y concurrencia}
+
+Las veinte corridas del benchmark se completaron
+correctamente. En los archivos consolidados
+se registraron 2000 mediciones válidas, sin
+acuses fallidos ni latencias inválidas.
+
+Sin embargo, estos resultados corresponden
+a mensajes enviados de forma secuencial entre
+el cliente identificado como \texttt{nodo-A}
+y el servidor \texttt{nodo-B}. Por esta razón,
+no permiten sacar conclusiones sobre el
+comportamiento de los tres nodos trabajando
+al mismo tiempo.
