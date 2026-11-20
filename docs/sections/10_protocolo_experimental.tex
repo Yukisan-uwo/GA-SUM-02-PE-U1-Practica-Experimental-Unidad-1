@@ -1,18 +1,187 @@
-% Autoría principal: Mario; datos y condiciones validados por todos.
+
+% Autoría principal: Mario Zambrano.
+% Protocolo de las mediciones realizadas el 20-11-2026.
+
 \subsection{Entorno de ejecución}
-\pendiente{Registrar fecha/hora, sistema operativo, versión exacta de Python, CPU, RAM, estado de la máquina, librerías y modo de ejecución.}
+
+El experimento se realizó el 20 de noviembre de 2026 en una computadora con Windows 11 Home
+(versión 10.0.26200), procesador AMD Ryzen 7 7730U with Radeon Graphics y 15,34 GiB de
+memoria RAM. Se utilizó Python 3.11.9 dentro de un entorno virtual para mantener las
+dependencias del proyecto aisladas de otras instalaciones.
+
+Las bibliotecas utilizadas fueron
+\texttt{grpcio} y \texttt{grpcio-tools} 1.85.1,
+\texttt{protobuf} 7.36.2, \texttt{pandas} 3.1.1
+y \texttt{matplotlib} 3.11.2. Las versiones se
+comprobaron antes de ejecutar las mediciones y
+corresponden a las definidas en
+\texttt{requirements.txt}.
+
+La práctica contempla una arquitectura de tres
+nodos independientes, denominados
+\texttt{nodo-A}, \texttt{nodo-B} y
+\texttt{nodo-C}, asociados a los puertos
+5000, 5001 y 5002. Para la comparación de
+rendimiento se utilizó el cliente identificado
+como \texttt{nodo-A}, que estableció una
+conexión con el servidor \texttt{nodo-B}
+a través de \texttt{127.0.0.1:5001}.
+
+Los mecanismos TCP y gRPC se evaluaron por separado, deteniendo el servidor anterior
+antes de iniciar el siguiente. En ambos casos se redujo la salida por consola y
+se desactivó el registro de eventos del servidor, mientras que los clientes
+mantuvieron sus registros automáticos.
 
 \subsection{Variables, condiciones y control experimental}
-\pendiente{Definir latencia de ida y vuelta (RTT), tamaño real de mensaje 100 bytes / 10 KB, mecanismo, número de nodos y carga/concurrencia; precisar unidad de medida.}
+
+Se consideraron dos variables independientes: el mecanismo de comunicación y el tamaño de
+la carga útil. Para el primer factor se evaluaron sockets TCP y gRPC con Protocol
+Buffers; para el segundo se utilizaron mensajes de 100 y 10240 bytes.
+
+Las cargas útiles se generaron mediante la repetición de un carácter ASCII. De esta
+manera, el contenido enviado tuvo la longitud establecida para ambas
+implementaciones. Los tamaños indicados corresponden únicamente al campo
+\texttt{message} y no incluyen los bytes adicionales de JSON, Protocol Buffers ni
+los encabezados de transporte.
+
+La variable de respuesta principal fue la latencia de ida y vuelta (RTT), expresada
+en milisegundos. Se midió el tiempo transcurrido durante la operación de
+envío de una solicitud y recepción de su acuse, utilizando
+\texttt{time.perf\_counter()}.
+
+\begin{equation}
+RTT_{\mathrm{ms}} =
+(t_{\mathrm{fin}}-t_{\mathrm{inicio}})
+\times 1000
+\end{equation}
+
+Como segunda métrica se calculó el rendimiento en mensajes por segundo. Para
+cada corrida se dividió el número de mensajes confirmados entre la duración
+total de dicha corrida:
+
+\begin{equation}
+R = \frac{N}{T}
+\end{equation}
+
+En esta expresión, $N$ representa la cantidad de mensajes confirmados y $T$
+la duración de la corrida en segundos.
+
+El benchmark reutilizó una conexión por mecanismo y tamaño de carga útil. Los
+mensajes se enviaron secuencialmente: cada solicitud debía recibir su acuse
+antes de continuar con la siguiente. Se estableció un tiempo de espera de
+dos segundos por operación.
 
 \subsection{Número de repeticiones y calentamiento}
-\pendiente{Definir al menos 5 corridas medidas de 100 envíos por mecanismo y tamaño; excluir una corrida adicional de calentamiento, con mismas condiciones.}
+
+La combinación de los dos mecanismos con los dos tamaños de mensaje produjo
+cuatro condiciones experimentales.
+
+Antes de cada condición se ejecutó una corrida de calentamiento de 100 envíos.
+Estas observaciones quedaron excluidas de los archivos consolidados utilizados
+para el análisis estadístico.
+
+Después del calentamiento se realizaron cinco corridas medidas de 100 envíos,
+equivalentes a 500 observaciones por condición.
+
+\begin{table}[htbp]
+\centering
+\small
+\begin{tabular}{lrrr}
+\toprule
+Mecanismo & Carga útil & Corridas & RTT medidos \\
+\midrule
+TCP  & 100 B   & 5 & 500 \\
+TCP  & 10240 B & 5 & 500 \\
+gRPC & 100 B   & 5 & 500 \\
+gRPC & 10240 B & 5 & 500 \\
+\midrule
+\textbf{Total} & & \textbf{20} & \textbf{2000} \\
+\bottomrule
+\end{tabular}
+\caption{Distribución de las mediciones del
+experimento. Se excluyeron 400 envíos de
+calentamiento.}
+\label{tab:diseno_experimental}
+\end{table}
+
+Las corridas medidas finalizaron con 2000 acuses correctos. La revisión
+posterior de los registros confirmó que cada condición contenía 500 RTT
+positivos y válidos, distribuidos en cinco corridas de 100 mensajes.
 
 \subsection{Prueba simultánea de tres clientes}
-\pendiente{Documentar el método de simultaneidad y qué se observará; diferenciar estas pruebas de las corridas secuenciales de latencia.}
+
+El benchmark de rendimiento se ejecutó mediante intercambios secuenciales entre
+un cliente y un servidor. Por este motivo, sus resultados no permiten describir
+directamente el comportamiento del sistema ante solicitudes concurrentes.
+
+La rúbrica contempla una evaluación adicional con tres clientes que envíen
+mensajes simultáneamente. Esta prueba se considera independiente de las
+corridas utilizadas para comparar latencias y rendimiento.
+
+Su verificación requiere examinar los acuses recibidos y los registros de
+eventos de Lamport, prestando atención al orden de los sucesos y a las
+relaciones de causalidad observables. Los resultados de esta evaluación
+se incorporarán una vez que se disponga de las evidencias de ejecución
+correspondientes.
 
 \subsection{Trazabilidad y protección de los datos}
-\pendiente{Indicar rutas exactas de CSV y procedimiento de creación/verificación de SHA256SUMS. Nunca editar a mano los datos crudos.}
+
+Los resultados del benchmark se almacenaron en cuatro archivos CSV
+dentro del directorio \texttt{data/}:
+
+\begin{itemize}
+    \item \texttt{latency\_sockets.csv}
+    \item \texttt{runs\_sockets.csv}
+    \item \texttt{latency\_grpc.csv}
+    \item \texttt{runs\_grpc.csv}
+\end{itemize}
+
+Los archivos de latencia incluyen el mecanismo, tamaño del mensaje, corrida,
+intento, RTT, estado del acuse y fecha de registro. Los archivos de rendimiento
+contienen la duración de cada corrida, el número de mensajes confirmados y
+la tasa calculada en mensajes por segundo.
+
+El análisis se realizó mediante \texttt{analysis/analisis\_resultados.py},
+utilizando pandas y matplotlib. El programa comprobó la estructura de los
+datos, la cantidad de registros por condición y la ausencia de acuses
+fallidos o latencias inválidas. A partir de los archivos originales
+generó los resúmenes estadísticos, las tablas LaTeX y las figuras.
+
+Los CSV consolidados se conservaron sin modificaciones manuales. También
+se calcularon sus huellas SHA-256, registradas en \texttt{data/SHA256SUMS}.
+La integridad se comprobó recalculando cada hash y comparándolo con su
+valor almacenado.
+
+Los archivos automáticos \texttt{latencias\_*.csv} y
+\texttt{eventos\_*.csv} se mantuvieron separados de las mediciones consolidadas,
+ya que contienen también registros de calentamiento y pruebas funcionales.
 
 \subsection{Limitaciones y amenazas a la validez}
-\pendiente{Considerar localhost vs red real, ruido de procesos, CPU, planificador, caché, GIL, arranque de canales y diferencias de serialización o tamaño útil de carga.}
+
+Las mediciones se realizaron en localhost, por lo que no incorporan las condiciones
+de una comunicación entre computadoras a través de una red física. Factores
+como la latencia de red, la congestión o la variabilidad de los enlaces podrían
+modificar los resultados en otro entorno.
+
+Aunque ambos mecanismos utilizaron las mismas cargas útiles, sus operaciones
+internas no fueron idénticas. En TCP, la serialización JSON se realizó dentro
+del intervalo medido. En gRPC, el objeto de solicitud se construyó antes de iniciar
+el cronómetro y la llamada remota quedó incluida en la medición. En consecuencia,
+las diferencias observadas corresponden a las implementaciones evaluadas y no
+pueden atribuirse exclusivamente al protocolo de transporte.
+
+También deben distinguirse las métricas utilizadas. El RTT individual no incluye
+todas las operaciones de registro posteriores a la recepción del acuse,
+mientras que el rendimiento considera la duración completa de cada corrida,
+incluyendo dichas operaciones.
+
+Las pruebas TCP se ejecutaron antes que las de gRPC. No se controló
+instrumentalmente la actividad de otros procesos de Windows ni la
+variación de carga del procesador. La planificación de tareas del
+sistema operativo y otras actividades en segundo plano pudieron influir
+en los tiempos obtenidos.
+
+Por estas razones, los resultados permiten comparar el comportamiento
+de los clientes implementados por el equipo bajo las condiciones
+específicas de esta práctica, sin establecer conclusiones generales
+sobre el rendimiento de TCP y gRPC en cualquier sistema distribuido.
