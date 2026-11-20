@@ -71,3 +71,11 @@
 - **Problema encontrado:** Al probar el servidor seguía saliendo el comportamiento anterior (respondía 6 en lugar de 7), y en la primera corrida de los 20 intercambios el cliente no pudo conectar.
 - **Solución y comprobación:** El archivo no estaba guardado en VS Code (tenía el punto en la pestaña). Lo guardé, reinicié el servidor y respondió 7. En el segundo caso, el servidor del nodo-B no estaba encendido; lo levanté y los 20 envíos terminaron con `ok: True`. Validé además que un timestamp negativo devuelve `INVALID_ARGUMENT` sin tumbar el servidor.
 - **Tiempo dedicado:** 45 min.
+
+### 2026-11-19 · Mario Zambrano
+- **Integrantes presentes:** Mario Zambrano.
+- **Commit(s):** `a276d52` — Integre los clientes TCP y gRPC al benchmark.
+- **Qué se hizo:** Actualicé `analysis/benchmark.py` para conectarlo con los clientes TCP y gRPC desarrollados por mis compañeros. Incorporé la ejecución de pruebas reales utilizando la interfaz común de ambos clientes y conservé las opciones de configuración del experimento. Probé la comunicación con el servidor `nodo-B` en el puerto 5001, realizando tres envíos de 100 bytes por cada mecanismo. En ambos casos se recibieron correctamente los tres acuses con `ok=True` y se mostraron los tiempos RTT. También guardé dos capturas de estas pruebas en `docs/evidencias/Mario/`.
+- **Problema encontrado:** Al intentar iniciar el servidor gRPC, apareció un error por incompatibilidad entre la versión de Protobuf utilizada para generar `messaging_pb2.py` (7.35.1) y la instalada en mi computadora (6.33.6).
+- **Solución y comprobación:** Creé un entorno virtual `.venv` e instalé las dependencias definidas en `requirements.txt`. Después pude iniciar el servidor gRPC y ejecutar las tres solicitudes correctamente. La prueba TCP también terminó sin errores. Por ahora las pruebas son de integración y no corresponden a las mediciones oficiales de 100 envíos.
+- **Tiempo dedicado:** 48 minutos.
