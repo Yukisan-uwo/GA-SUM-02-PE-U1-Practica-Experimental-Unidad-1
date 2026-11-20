@@ -124,3 +124,17 @@
 - **Problema encontrado:** Al revisar el PDF observé que algunas figuras se desplazaban de la posición en la que estaban colocadas en el archivo LaTeX, lo que provocaba una distribución poco adecuada del texto.
 - **Solución y comprobación:** Ajusté el tamaño y la posición de las figuras utilizando el paquete `float` y la opción `[H]`.
 - **Tiempo dedicado:** 36 minutos.
+
+### 2026-11-20 · Mera Jumbo Allison
+- **Integrantes presentes:** Mera Jumbo Allison.
+- **Commit(s):**
+  - `1b5dc15` — Documenta implementacion gRPC con contrato, errores y 20 intercambios.
+  - `685df58` — Agrega seccion 03 de comunicacion y referencias oficiales de gRPC, Protobuf y RMI.
+  - `41bbf64` — Agrega respuesta sobre efecto de un nodo caido en los relojes Lamport.
+  - `88217e1` — Agrega analisis de tipado y manejo de errores en gRPC a la discusion.
+  - `18b317e` — Redacta conclusion individual sobre implementacion gRPC.
+  - `986c7d8` — Corrección ortográfica.
+- **Qué se hizo:** Redacté la sección 08 (implementación gRPC) con el contrato, fragmentos del servidor y del cliente, la tabla de errores y los 20 intercambios. Redacté la sección 03 (sockets, RPC, gRPC, Protocol Buffers y RMI) con un diagrama de secuencia en TikZ y agregué tres referencias oficiales al `.bib`. Respondí la pregunta del anexo sobre la caída de un nodo, escribí mi parte de la discusión sobre tipado y manejo de errores, y mi conclusión individual relacionada con el PFC.
+- **Problema encontrado:** Las tablas y figuras de la sección 08 se movían a otras partes del documento (una figura quedó en la 4.3), y una cita atribuía a un artículo algo que no se pudo verificar. Además, mi conclusión tenía un error de tipeo.
+- **Solución y comprobación:** Fijé las tablas y figuras para que queden después del párrafo que las menciona y lo comprobé compilando en TeXstudio. Cambié la cita por la documentación oficial de gRPC y el artículo de Niswar, que sí lo respaldan. El error de la conclusión lo corregí desde GitHub.
+- **Tiempo dedicado:** 2 horas 30 min.
