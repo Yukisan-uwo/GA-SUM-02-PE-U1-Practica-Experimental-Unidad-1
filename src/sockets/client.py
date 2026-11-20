@@ -18,12 +18,21 @@ from csv_logs import append_event, append_latency
 
 
 def generar_mensaje(tamano_bytes: int) -> str:
-    """Genera una carga ASCII de tamaño exacto para las pruebas TCP."""
+    """Genera una carga ASCII del tamaño indicado para la prueba."""
     if not isinstance(tamano_bytes, int) or isinstance(tamano_bytes, bool):
         raise TypeError("tamano_bytes debe ser un entero")
     if tamano_bytes < 0:
         raise ValueError("tamano_bytes no puede ser negativo")
     return "x" * tamano_bytes
+
+
+def clasificar_error(error: BaseException) -> str:
+    """Convierte errores de Python a las etiquetas comunes del CSV."""
+    if isinstance(error, socket.timeout):
+        return "timeout"
+    if isinstance(error, ConnectionRefusedError):
+        return "conexion_rechazada"
+    return "otro"
 
 
 class LamportClock:
@@ -82,8 +91,8 @@ class ClienteTCP:
 
         request = {"sender": sender, "timestamp": self.clock.tick(), "message": message}
         message_id = f"{sender}-{attempt:06d}"
-        started = time.perf_counter()
         append_event(sender, "envio_solicitud", request["timestamp"], message_id, sender, destination)
+        started = time.perf_counter()
         try:
             self.writer.write(json.dumps(request, ensure_ascii=False, separators=(",", ":")) + "\n")
             self.writer.flush()
@@ -96,7 +105,7 @@ class ClienteTCP:
                 attempt,
                 elapsed_ms,
                 False,
-                type(error).__name__,
+                clasificar_error(error),
             )
             raise
         elapsed_ms = (time.perf_counter() - started) * 1000
