@@ -5,11 +5,13 @@ from __future__ import annotations
 import csv
 from datetime import datetime
 from pathlib import Path
+from threading import Lock
 from typing import Iterable
 
 
 REPOSITORY_ROOT = Path(__file__).resolve().parents[2]
 DATA_DIRECTORY = REPOSITORY_ROOT / "data"
+_WRITE_LOCK = Lock()
 EVENT_FIELDS = (
     "mecanismo",
     "nodo",
@@ -32,13 +34,14 @@ LATENCY_FIELDS = (
 
 
 def _append_csv(path: Path, fields: Iterable[str], row: dict[str, object]) -> None:
-    DATA_DIRECTORY.mkdir(parents=True, exist_ok=True)
-    write_header = not path.exists() or path.stat().st_size == 0
-    with path.open("a", newline="", encoding="utf-8") as stream:
-        writer = csv.DictWriter(stream, fieldnames=list(fields))
-        if write_header:
-            writer.writeheader()
-        writer.writerow(row)
+    with _WRITE_LOCK:
+        DATA_DIRECTORY.mkdir(parents=True, exist_ok=True)
+        write_header = not path.exists() or path.stat().st_size == 0
+        with path.open("a", newline="", encoding="utf-8") as stream:
+            writer = csv.DictWriter(stream, fieldnames=list(fields))
+            if write_header:
+                writer.writeheader()
+            writer.writerow(row)
 
 
 def append_event(

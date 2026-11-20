@@ -9,28 +9,17 @@ from __future__ import annotations
 import argparse
 import json
 import socket
+import sys
 import threading
+from pathlib import Path
 from typing import Any
 
 from csv_logs import append_event
 
-
-class LamportClock:
-    """Per-process logical clock; Roger should confirm this shared contract."""
-
-    def __init__(self) -> None:
-        self.value = 0
-        self._lock = threading.Lock()
-
-    def tick(self) -> int:
-        with self._lock:
-            self.value += 1
-            return self.value
-
-    def receive(self, remote: int) -> int:
-        with self._lock:
-            self.value = max(self.value, remote) + 1
-            return self.value
+ROOT = Path(__file__).resolve().parents[2]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+from src.common.lamport import LamportClock  # noqa: E402
 
 
 def read_json_line(reader: Any) -> dict[str, Any] | None:

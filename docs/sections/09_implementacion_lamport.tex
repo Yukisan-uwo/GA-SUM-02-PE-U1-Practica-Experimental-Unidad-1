@@ -1,9 +1,104 @@
-% Autoría principal: Roger.
-\subsection{Implementación del contador lógico compartido}
-\pendiente{Documentar actualización del contador en envío y recepción, exclusión mutua si hay concurrencia e integración real con ambos protocolos.}
+% Desarrollo con asistencia de IA; pendiente de revisión del integrante responsable.
+\subsection{Contador lógico por proceso}
+El componente \path{src/common/lamport.py} define la clase
+\texttt{LamportClock}. Cada nodo debe tener su propia instancia, compartida
+entre los hilos de servidor y cliente del mismo proceso. No se comparte un
+contador entre los tres nodos: eso eliminaría la independencia de sus relojes.
+Dos procesos separados tampoco comparten esta instancia aunque utilicen el
+mismo nombre de nodo.
+
+Las operaciones de actualización y consulta usan un bloqueo de exclusión mutua.
+El método \texttt{tick()} incrementa y devuelve el contador; \texttt{send()}
+es una interfaz equivalente para envíos. La recepción valida primero que la
+marca sea un entero no negativo y después aplica la regla de
+la ecuación~\eqref{eq:lamport-recepcion}. Se rechazan valores booleanos aunque
+Python los considere subtipos de entero. La propiedad \texttt{value} permite
+consultar el reloj sin modificarlo.
+
+El siguiente fragmento muestra la sección crítica de recepción:
+\begin{lstlisting}[language=Python]
+def receive(self, remote: int) -> int:
+    _validate_timestamp(remote)
+    with self._lock:
+        self._value = max(self._value, remote) + 1
+        return self._value
+\end{lstlisting}
+
+Para conservar compatibilidad de interfaces, el módulo también proporciona
+\texttt{enviar()}, \texttt{recibir()} y \texttt{valor}. Los alias no representan
+eventos adicionales: se elige una sola operación por evento. La compatibilidad
+de nombres no demuestra por sí sola la integración con un transporte.
+
+El cliente y el servidor TCP de esta revisión importan la clase común, en lugar
+de mantener implementaciones locales duplicadas. Conservan sus argumentos de
+ejecución y el formato JSON existente. El servidor y el cliente gRPC revisados
+también importan la clase común y el servidor incrementa antes de enviar el acuse.
+Esto unifica el algoritmo, pero los ejecutables actuales todavía crean instancias
+separadas para cliente y servidor. No constituyen por sí solos una arquitectura
+de tres procesos con servidor y cliente compartiendo reloj dentro de cada nodo.
+El registro TCP existente también protege con un bloqueo la creación de cabecera
+y la escritura de filas entre hilos del proceso. Este bloqueo evita escrituras
+simultáneas, pero no garantiza que el orden de las filas coincida con el orden
+de actualización de un reloj protegido por otro bloqueo independiente.
 
 \subsection{Registro e identificación de eventos}
-\pendiente{Precisar campos de CSV: nodo, evento, mecanismo, reloj local, reloj recibido (si aplica), ID de mensaje, identificador de correlación y hora real.}
+El componente propuesto en \path{src/common/event_log.py} implementa
+\texttt{EventLog}. Su bloqueo engloba la actualización del reloj y la escritura
+del evento, de modo que los hilos del proceso no registren una marca obtenida
+por otra operación concurrente. El método devuelve exactamente la marca
+registrada; ese retorno debe colocarse en el mensaje enviado.
 
-\subsection{Tratamiento de concurrencia y fallos}
-\pendiente{Indicar decisiones reales ante mensajes simultáneos, caída de nodos, timeouts y reintentos.}
+\begin{lstlisting}[language=Python]
+timestamp = log.record(
+    "envio_solicitud", message_id, origin, destination)
+# El transporte envia timestamp y message_id.
+received = log.record(
+    "recepcion_solicitud", message_id, origin,
+    destination, remote=request_timestamp)
+\end{lstlisting}
+
+Como \texttt{record()} ya actualiza el contador, no se llama además a
+\texttt{send()} o \texttt{receive()} para ese mismo evento. Durante una captura
+completa, todos los eventos del reloj deben pasar por el registro y la captura
+debe comenzar con el contador en cero.
+
+El CSV contiene mecanismo, corrida, nodo, secuencia local, tipo de evento,
+reloj local, reloj remoto cuando corresponde, hora UTC, identificador de
+mensaje, origen y destino. La solicitud y su acuse comparten identificador,
+pero sus tipos de evento permiten distinguir las dos direcciones. El ID debe
+ser único por intercambio dentro de cada mecanismo y corrida y debe
+transmitirse hasta el receptor; no se reconstruye a partir del orden de llegada.
+
+Cada proceso escribe un archivo nuevo y exclusivo por corrida. La apertura
+rechaza archivos existentes para evitar mezclar ejecuciones. La secuencia local
+establece el orden del proceso; la hora UTC documenta cuándo se registró el
+evento y no se utiliza como prueba de causalidad.
+
+Este esquema corresponde al componente de registro preparado, no a los CSV
+que producen actualmente los adaptadores del equipo. Sus registros existentes
+no incluyen corrida, secuencia ni reloj remoto; el servidor gRPC reconstruye
+los identificadores mediante contadores por emisor y conexión. Para emplear el
+verificador completo se necesita integrar el registro y transmitir el ID real
+desde el cliente. No es válido completar los CSV antiguos con valores supuestos.
+
+\subsection{Concurrencia, validación y límites}
+Las pruebas automatizadas comprueban actualizaciones sin pérdida entre hilos,
+filas completas y secuencias ordenadas. El verificador
+\path{analysis/verify_lamport.py} comprueba las reglas del contador y empareja
+envíos y recepciones de solicitudes y acuses. También rechaza secuencias
+incompletas, duplicados y marcas transmitidas inconsistentes.
+
+El bloqueo no sincroniza procesos distintos ni protege automáticamente una
+conexión de red compartida. Los adaptadores TCP y gRPC deben gestionar su
+transporte y transmitir las marcas e identificadores del registro. Un fallo
+de escritura invalida la captura y debe interrumpir esa corrida.
+
+Un timeout no demuestra que el receptor no haya procesado la solicitud. Un
+reintento no debe añadirse como si fuera el mismo intercambio completo: requiere
+una política explícita de identificación y, si se pretende evitar efectos
+duplicados, deduplicación en el receptor. El componente de reloj no implementa
+esa política ni detecta fallos de nodos.
+
+\pendiente{Integrar estos componentes en ambos transportes, ejecutar las pruebas
+de tres clientes y fallos de nodos, y documentar los resultados reales. Las
+pruebas unitarias no acreditan todavía esas ejecuciones.}

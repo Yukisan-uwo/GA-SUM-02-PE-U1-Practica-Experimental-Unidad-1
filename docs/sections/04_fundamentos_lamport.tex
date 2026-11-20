@@ -1,17 +1,76 @@
-% Autoría principal: Roger. Revisar en equipo.
-\subsection{Sincronización y causalidad en sistemas distribuidos}
-\pendiente{Diferenciar tiempo físico, orden causal y concurrencia.}
+% Desarrollo con asistencia de IA; pendiente de revisión del integrante responsable.
+\subsection{Tiempo físico, causalidad y concurrencia}
+La hora del sistema permite fechar un registro, pero no basta para determinar
+qué evento causó otro: los relojes físicos pueden diferir y el orden de llegada
+depende de la red y de la planificación de procesos. Los relojes lógicos
+representan restricciones de orden, no segundos transcurridos
+\cite{vanSteenTanenbaum2023}.
 
-\subsection{Relojes lógicos de Lamport}
-\pendiente{Explicar las reglas formales de envío, recepción y eventos locales; utilizar la ecuación mostrada a continuación y la relación de precedencia causal.}
+La relación de precedencia causal, escrita $a\rightarrow b$, se define por:
+\begin{enumerate}
+  \item El orden de los eventos dentro de un mismo proceso.
+  \item El envío de un mensaje antes de su recepción.
+  \item La transitividad: si $a\rightarrow b$ y $b\rightarrow c$, entonces
+  $a\rightarrow c$.
+\end{enumerate}
+Dos eventos son concurrentes cuando no se cumple ninguna de las relaciones
+$a\rightarrow b$ ni $b\rightarrow a$. Esta concurrencia es causal: no exige
+que ambos eventos ocurran en el mismo instante físico.
+
+\subsection{Reglas del reloj de Lamport}
+Cada nodo $i$ mantiene un contador $L_i$, inicialmente cero. Antes de registrar
+un evento local o enviar un mensaje, realiza:
 \begin{equation}
-L_i \leftarrow \max(L_i, L_{\mathrm{mensaje}}) + 1
+L_i \leftarrow L_i+1.
+\label{eq:lamport-envio}
+\end{equation}
+El mensaje transporta el contador resultante. Si se recibe una marca $t$, la
+actualización es:
+\begin{equation}
+L_i \leftarrow \max(L_i,t)+1.
 \label{eq:lamport-recepcion}
 \end{equation}
-\pendiente{Añadir reglas completas de eventos locales y de envío, con notación consistente.}
+La recepción y el envío de su acuse son eventos distintos; por ello, el acuse
+requiere otro incremento. Estas reglas garantizan la condición del reloj:
+\begin{equation}
+a\rightarrow b \;\Longrightarrow\; L(a)<L(b).
+\end{equation}
+El recíproco es falso: $L(a)<L(b)$ no demuestra que exista una cadena causal
+entre ambos. Tampoco una diferencia de cinco unidades representa cinco
+mensajes ni una duración física de cinco unidades de tiempo
+\cite{vanSteenTanenbaum2023}.
 
-\subsection{Relojes vectoriales de Fidge--Mattern}
-\pendiente{Describir los relojes vectoriales y explicar por qué distinguen causalidad y concurrencia mejor que Lamport; citar fuentes comprobadas.}
+Dos eventos de nodos distintos con la misma marca no pueden estar relacionados
+por precedencia causal si se cumplen las reglas anteriores. Sin embargo, una
+marca escalar no permite decidir la concurrencia para todos los pares de eventos:
+también puede haber eventos concurrentes con marcas diferentes. Ordenar por
+la pareja $(L,\mathrm{id\ del\ nodo})$ permite desempatar de forma determinista,
+pero ese orden total no convierte los eventos en causalmente relacionados.
 
-\subsection{Ejemplo matemático explicado}
-\pendiente{Construir y justificar un ejemplo didáctico completo, claramente separado de las mediciones reales. La prueba exigida en la sección de verificación debe utilizar registros auténticos.}
+\subsection{Comparación con relojes vectoriales}
+En un sistema de tres nodos, un reloj vectorial mantiene tres componentes,
+una por nodo. En un evento local o envío se incrementa la componente propia;
+al recibir se combina el vector local y el recibido mediante máximos por
+componente y después se incrementa la componente del receptor.
+Para dos vectores $V(a)$ y $V(b)$, se escribe $V(a)<V(b)$ si todas las
+componentes del primero son menores o iguales y al menos una es estrictamente
+menor. Bajo el modelo habitual de procesos y mensajes, esta comparación
+representa la precedencia causal; vectores incomparables identifican
+concurrencia \cite{vanSteenTanenbaum2023}.
+
+El costo es mantener y transmitir información proporcional al número de nodos,
+frente a un contador escalar en Lamport. Los relojes vectoriales se presentan
+como comparación conceptual; no forman parte del módulo implementado.
+
+\subsection{Ejemplo didáctico, no experimental}
+Supóngase que A y C, con contadores inicialmente en cero, envían sus primeros
+mensajes a B sin haber intercambiado información entre sí. Ambos envíos llevan
+marca 1 y son concurrentes. Si B recibe primero el mensaje de A, actualiza su
+contador a 2; al enviar el acuse lo incrementa a 3. A recibe ese acuse y pasa
+a $\max(1,3)+1=4$. Si luego B recibe el mensaje inicial de C, con marca 1,
+su contador pasa a $\max(3,1)+1=4$.
+
+En este ejemplo, el envío de A precede causalmente a su recepción en B,
+con $1<2$. Los primeros envíos de A y C tienen la misma marca sin relación
+causal entre ellos. Los números anteriores ilustran las reglas; no son
+mediciones ni sustituyen la comprobación sobre los CSV de la práctica.

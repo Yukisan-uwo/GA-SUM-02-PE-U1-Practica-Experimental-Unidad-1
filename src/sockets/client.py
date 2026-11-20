@@ -11,10 +11,17 @@ from __future__ import annotations
 import argparse
 import json
 import socket
+import sys
 import time
+from pathlib import Path
 from typing import Any
 
 from csv_logs import append_event, append_latency
+
+ROOT = Path(__file__).resolve().parents[2]
+if str(ROOT) not in sys.path:
+    sys.path.insert(0, str(ROOT))
+from src.common.lamport import LamportClock  # noqa: E402
 
 
 def generar_mensaje(tamano_bytes: int) -> str:
@@ -33,21 +40,6 @@ def clasificar_error(error: BaseException) -> str:
     if isinstance(error, ConnectionRefusedError):
         return "conexion_rechazada"
     return "otro"
-
-
-class LamportClock:
-    """Per-process logical clock; align the shared implementation with Roger."""
-
-    def __init__(self) -> None:
-        self.value = 0
-
-    def tick(self) -> int:
-        self.value += 1
-        return self.value
-
-    def receive(self, remote: int) -> int:
-        self.value = max(self.value, remote) + 1
-        return self.value
 
 
 def receive_json_line(reader: Any) -> dict[str, Any]:
@@ -120,8 +112,8 @@ class ClienteTCP:
             or not isinstance(ok, bool)
         ):
             raise ValueError("El acuse requiere receiver, timestamp entero y ok booleano")
-        self.clock.receive(remote_clock)
-        append_event(sender, "recepcion_acuse", self.clock.value, message_id, receiver, sender)
+        received_clock = self.clock.receive(remote_clock)
+        append_event(sender, "recepcion_acuse", received_clock, message_id, receiver, sender)
         append_latency(len(message.encode("utf-8")), run_number, attempt, elapsed_ms, ok)
         return response, elapsed_ms
 
