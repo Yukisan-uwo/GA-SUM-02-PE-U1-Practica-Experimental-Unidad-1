@@ -1,0 +1,18 @@
+\begin{table}[htbp]
+\centering
+\small
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{llrrrrr}
+\toprule
+Mecanismo & Carga útil & $n$ & Media (ms) & Mediana (ms) & DE (ms) & P95 (ms) \\
+\midrule
+TCP & 100 B & 500 & 0.122 & 0.113 & 0.028 & 0.185 \\
+TCP & 10 KiB (10240 B) & 500 & 0.197 & 0.186 & 0.039 & 0.282 \\
+gRPC & 100 B & 500 & 0.547 & 0.489 & 0.231 & 0.819 \\
+gRPC & 10 KiB (10240 B) & 500 & 0.564 & 0.533 & 0.110 & 0.758 \\
+\bottomrule
+\end{tabular}%
+}
+\caption{Latencia RTT por mecanismo y tamaño de carga útil. DE: desviación estándar muestral; P95: percentil 95.}
+\label{tab:estadisticas_rtt}
+\end{table}

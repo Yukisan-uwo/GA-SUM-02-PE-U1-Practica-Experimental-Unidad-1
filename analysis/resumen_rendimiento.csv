@@ -1,0 +1,5 @@
+mecanismo,tamano_bytes,corridas,rendimiento_medio,rendimiento_desviacion
+TCP,100,5,576.431081,4.034203
+TCP,10240,5,533.244788,17.703630
+GRPC,100,5,442.643550,21.420630
+GRPC,10240,5,431.977457,19.705949

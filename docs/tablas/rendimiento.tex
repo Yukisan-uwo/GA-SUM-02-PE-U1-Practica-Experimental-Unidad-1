@@ -1,0 +1,18 @@
+\begin{table}[htbp]
+\centering
+\small
+\resizebox{\linewidth}{!}{%
+\begin{tabular}{llrrr}
+\toprule
+Mecanismo & Carga útil & Corridas & Media (mensajes/s) & DE (mensajes/s) \\
+\midrule
+TCP & 100 B & 5 & 576.43 & 4.03 \\
+TCP & 10 KiB (10240 B) & 5 & 533.24 & 17.70 \\
+gRPC & 100 B & 5 & 442.64 & 21.42 \\
+gRPC & 10 KiB (10240 B) & 5 & 431.98 & 19.71 \\
+\bottomrule
+\end{tabular}%
+}
+\caption{Rendimiento observado, calculado como mensajes confirmados divididos entre la duración de cada corrida; media y desviación estándar de cinco corridas.}
+\label{tab:rendimiento}
+\end{table}
