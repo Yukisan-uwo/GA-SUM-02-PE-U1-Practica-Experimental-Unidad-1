@@ -1,12 +1,61 @@
 % Autoría principal: Mera. Revisar en equipo.
 \subsection{Sockets TCP y UDP}
-\pendiente{Describir TCP y UDP a nivel conceptual. La implementación evaluada por el SGA corresponde a sockets TCP, no se exige construir UDP.}
+
+Un socket es el punto final de una comunicación entre dos procesos. Se identifica por una dirección IP y un puerto, y le ofrece al programa operaciones básicas como abrir una conexión, enviar bytes, recibirlos y cerrar. Es una interfaz de bajo nivel: el sistema operativo transporta los datos, pero el formato del mensaje y la manera de interpretarlo los decide el programador \cite{vanSteenTanenbaum2023}.
+
+Sobre los sockets se usan sobre todo dos protocolos de transporte. TCP es orientado a conexión: Antes de enviar datos se establece una conexión, y el protocolo garantiza que los bytes lleguen completos, sin duplicados y en el mismo orden en que se enviaron \cite{eddy2022tcp}. Lo que TCP entrega es un flujo continuo de bytes, nada de mensajes separados; si el emisor escribe dos mensajes seguidos, el receptor puede leerlos juntos o partidos. Por eso la implementación de esta práctica termina cada objeto JSON con un salto de línea, que marca dónde acaba un mensaje y empieza el siguiente \cite{bray2017json}. UDP, en cambio, no establece conexión ni garantiza la entrega ni el orden: 	Cada datagrama viaja como una unidad independiente y, si se pierde, la aplicación tiene que darse cuenta y decidir qué hacer \cite{vanSteenTanenbaum2023}. Su costo es menor, pero traslada al programa el trabajo de manejar pérdidas.
 
 \subsection{RPC, gRPC y Protocol Buffers}
-\pendiente{Explicar el modelo solicitud-respuesta, contratos .proto, serialización binaria y diferencias con mensajes JSON.}
+
+La llamada a procedimiento remoto (RPC) busca que invocar una función de otro proceso se parezca a llamar una función local. El cliente no arma el mensaje a mano: llama a un \emph{stub}, que empaqueta los parámetros (\emph{marshalling}), los envía por la red y espera la respuesta. En el servidor, otro stub desempaqueta los parámetros, llama a la función real y devuelve el resultado por el mismo camino \cite{vanSteenTanenbaum2023}. La comunicación sigue existiendo, pero queda oculta detrás de una interfaz.
+
+gRPC es un framework de RPC que usa Protocol Buffers de dos maneras: como lenguaje para definir la interfaz del servicio (IDL) y como formato de los mensajes que se intercambian \cite{grpcIntro}. El transporte se hace sobre HTTP/2 \cite{niswar2024grpc}. En Protocol Buffers, el servicio y sus mensajes se describen en un archivo \texttt{.proto}; a cada campo se le asigna un número, y un compilador genera las clases que serializan y deserializan los datos en formato binario \cite{protobufProto3}. Como en el binario viaja el número del campo y no su nombre, los mensajes suelen ser más pequeños que su equivalente en JSON. En esta práctica, por ejemplo, una solicitud corta ocupó 16 bytes con Protocol Buffers y 50 bytes en JSON (tabla~\ref{tab:tamanos-serializados}). Otra diferencia con los sockets es el tipado: el contrato fija el tipo de cada campo, de modo que el receptor no tiene que validar si un valor llegó como texto o como número.
+
+La literatura reciente no da un ganador único. Niswar et al. compararon REST, GraphQL y gRPC en microservicios y obtuvieron el menor tiempo de respuesta con gRPC, seguido de REST y GraphQL \cite{niswar2024grpc}. Śliwa y Pańczyk, en cambio, midieron un menor tiempo de respuesta del servidor con REST, aunque gRPC fue el que transmitió menos datos \cite{sliwa2021grpc}. Kamiński et al., con servidores implementados en Python, concluyeron que gRPC fue el método de transferencia más eficiente y confiable de los que evaluaron \cite{kaminski2023protocols}. Blinowski y Pełka evaluaron varios frameworks de RPC, entre ellos gRPC, en tres plataformas de nube pública \cite{blinowski2026rpc}. Que los resultados cambien de un estudio a otro muestra que el rendimiento depende de la carga, del lenguaje y del entorno.
 
 \subsection{RMI en Java}
-\pendiente{Presentar RMI como antecedente/comparación teórica de RPC, tal como pide la guía.}
+
+La invocación de métodos remotos (RMI) es la forma que tiene Java de llevar la idea de RPC a los objetos: en lugar de llamar a un procedimiento, el cliente invoca un método de un objeto que vive en otra máquina virtual de Java (JVM), posiblemente en otro equipo \cite{oracle2023rmi}. Los métodos que se pueden llamar a distancia se declaran en una interfaz remota, que extiende \texttt{java.rmi.Remote}. El cliente obtiene una referencia al objeto, normalmente buscándolo por nombre en un registro, y lo usa a través de un stub local que se encarga de la comunicación. Los parámetros y los resultados se envían mediante la serialización de objetos de Java \cite{oracle2023rmi}.
+
+La principal diferencia con gRPC está en el alcance. RMI asume que los dos extremos son programas Java y aprovecha el modelo de objetos de la plataforma \cite{oracle2023rmi}. gRPC, en cambio, define el contrato en un archivo \texttt{.proto} independiente del lenguaje, de modo que el cliente y el servidor pueden estar escritos en lenguajes distintos \cite{grpcIntro}. En esta práctica RMI no se implementó; se presenta como antecedente teórico de RPC, como pide la guía.
 
 \subsection{Diagramas de secuencia y expectativas de rendimiento}
-\pendiente{Incorporar o referenciar diagramas propios y formular expectativas justificadas, sin reportar resultados anticipados.}
+
+La figura~\ref{fig:secuencia-tcp-grpc} muestra un intercambio en cada mecanismo. En TCP, el programa del cliente construye el JSON, lo escribe en el socket y lee la respuesta línea por línea; el servidor hace lo mismo en sentido contrario. En gRPC, el cliente llama al método \texttt{EnviarMensaje} del stub, y la serialización, el envío por HTTP/2 y la llamada al método del servidor quedan a cargo del código generado y de la biblioteca.
+
+\par\medskip
+\noindent\begin{minipage}{\linewidth}
+	\centering
+	\makeatletter\def\@captype{figure}\makeatother
+	\resizebox{\linewidth}{!}{%
+		\begin{tikzpicture}[
+			font=\footnotesize,
+			actor/.style={draw, rounded corners=2pt, minimum width=2.3cm, minimum height=0.6cm, align=center},
+			msg/.style={-{Stealth[length=2mm]}},
+			ret/.style={-{Stealth[length=2mm]}, dashed},
+			note/.style={align=center, font=\scriptsize}
+			]
+			\foreach \dx/\titulo/\cli/\enl/\pre/\sol/\srv/\res/\fin in {
+				0/{Sockets TCP}/{Cliente\\\texttt{nodo-A}}/{conexión TCP (una vez)}/{arma el JSON\\\texttt{tick()}}/{\texttt{\{sender, timestamp,}\\\texttt{message\}} + \texttt{\textbackslash n}}/{lee la línea\\valida campos\\\texttt{receive()}, \texttt{tick()}}/{\texttt{\{receiver, timestamp,}\\\texttt{ok\}} + \texttt{\textbackslash n}}/{lee la línea\\\texttt{receive()}},
+				7.8/{gRPC}/{Cliente + stub\\\texttt{nodo-A}}/{canal HTTP/2 (una vez)}/{\texttt{send()}\\llama al stub}/{\texttt{EnviarMensaje(Request)}\\binario Protobuf}/{código generado\\deserializa\\\texttt{receive()}, \texttt{tick()}}/{\texttt{Response}\\binario Protobuf}/{el stub devuelve\\\texttt{receive()}}} {
+				\begin{scope}[xshift=\dx cm]
+					\node[font=\small\bfseries] at (1.6,0.9) {\titulo};
+					\node[actor] at (0,0) {\cli};
+					\node[actor] at (3.2,0) {Servidor\\\texttt{nodo-B}};
+					\draw[gray] (0,-0.45) -- (0,-5.4);
+					\draw[gray] (3.2,-0.45) -- (3.2,-5.4);
+					\draw[msg] (0,-1.2) -- node[above, note] {\enl} (3.2,-1.2);
+					\node[note, anchor=east] at (-0.1,-2.0) {\pre};
+					\draw[msg] (0,-2.5) -- node[above, note] {\sol} (3.2,-2.5);
+					\node[note, anchor=west] at (3.3,-3.1) {\srv};
+					\draw[ret] (3.2,-4.1) -- node[above, note] {\res} (0,-4.1);
+					\node[note, anchor=east] at (-0.1,-4.8) {\fin};
+				\end{scope}
+			}
+	\end{tikzpicture}}
+	\caption{Secuencia de un intercambio con sockets TCP y con gRPC entre \texttt{nodo-A} y \texttt{nodo-B}. Las flechas continuas son solicitudes y las discontinuas, respuestas.}
+	\label{fig:secuencia-tcp-grpc}
+\end{minipage}
+\par\medskip
+
+Antes de medir, se esperaba que los sockets TCP tuvieran menor latencia que gRPC en las pruebas sobre \texttt{localhost}. En TCP, entre la aplicación y el transporte solo hay un JSON y un salto de línea. En gRPC, cada llamada pasa además por la capa de HTTP/2, por la serialización de Protocol Buffers y por el código generado en ambos extremos, y en una sola máquina, sin retardo de red, ese procesamiento adicional pesa en proporción. La ventaja de tamaño del formato binario tampoco debería cambiar el resultado: con mensajes de 10\,KB la diferencia frente a JSON es de unos pocos bytes. Esta expectativa coincide con la hipótesis planteada en la sección de objetivos; los valores medidos se presentan y se discuten más adelante.
