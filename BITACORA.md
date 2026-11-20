@@ -116,3 +116,11 @@
 - **Problema encontrado:** Era necesario diferenciar las mediciones secuenciales del benchmark de las pruebas con tres nodos y clientes concurrentes, para evitar presentar como ejecutadas actividades que todavía corresponden a otros integrantes. También se identificaron algunas limitaciones de la comparación, como las diferencias de serialización entre TCP y gRPC y el uso de localhost.
 - **Solución y comprobación:** Revisé el contenido de la sección tomando como referencia el código del benchmark, los clientes desarrollados por el equipo y los resultados obtenidos anteriormente. Dejé documentadas las condiciones reales de las mediciones y sus limitaciones. La prueba de concurrencia quedó identificada como una evaluación independiente, cuyos resultados se incorporarán cuando Roger proporcione las evidencias correspondientes.
 - **Tiempo dedicado:** 32 minutos.
+
+### 2026-11-20 · Mario Zambrano
+- **Integrantes presentes:** Mario Zambrano.
+- **Commit(s):** `a354f04` — Latencias, rendimiento y graficas TCP gRPC.
+- **Qué se hizo:** Completé la sección 11 del informe LaTeX, correspondiente a los resultados del benchmark. Incorporé las tablas de estadísticas descriptivas y rendimiento que se generaron anteriormente con Python, junto con el gráfico de cajas y el gráfico de barras. También redacté la explicación de los resultados, comparando las latencias, la dispersión de los tiempos y los mensajes procesados por segundo para TCP y gRPC. Se mantuvo la distinción entre las mediciones secuenciales realizadas y las pruebas de concurrencia que corresponden a otra parte del trabajo.
+- **Problema encontrado:** Al revisar el PDF observé que algunas figuras se desplazaban de la posición en la que estaban colocadas en el archivo LaTeX, lo que provocaba una distribución poco adecuada del texto.
+- **Solución y comprobación:** Ajusté el tamaño y la posición de las figuras utilizando el paquete `float` y la opción `[H]`.
+- **Tiempo dedicado:** 36 minutos.
