@@ -79,3 +79,16 @@
 - **Problema encontrado:** Al intentar iniciar el servidor gRPC, apareció un error por incompatibilidad entre la versión de Protobuf utilizada para generar `messaging_pb2.py` (7.35.1) y la instalada en mi computadora (6.33.6).
 - **Solución y comprobación:** Creé un entorno virtual `.venv` e instalé las dependencias definidas en `requirements.txt`. Después pude iniciar el servidor gRPC y ejecutar las tres solicitudes correctamente. La prueba TCP también terminó sin errores. Por ahora las pruebas son de integración y no corresponden a las mediciones oficiales de 100 envíos.
 - **Tiempo dedicado:** 48 minutos.
+
+
+### 2026-11-19 · Joseph Calderón Saltos
+- **Integrantes presentes:** Joseph Calderón Saltos.
+- **Commit(s):**
+  - `a613e00` — Agrega referencias de TCP, Lamport y RPC.
+  - `db0ba65` — Documenta la implementación TCP.
+- **Qué se hizo:** Agregué las referencias bibliográficas y documenté el funcionamiento del cliente y el servidor TCP, junto con un fragmento del código real.
+- **Problema encontrado:** El CSV de los 20 intercambios todavía no está en el repositorio. También falta confirmar con Roger la regla del reloj de Lamport al enviar el acuse.
+- **Solución y comprobación:** Contrasté la descripción con los archivos actuales del cliente y el servidor. Dejé la parte de los 20 intercambios para completarla cuando se incorpore el CSV y se confirme la regla del reloj.
+- **Tiempo dedicado:** 35 minutos.
+
+
