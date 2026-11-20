@@ -3,7 +3,15 @@
 \pendiente{Discutir los valores obtenidos; no limitarse a repetir tablas. Comparar TCP y gRPC con 100 bytes y 10 KB.}
 
 \subsection{Facilidad de desarrollo, tipado y manejo de errores}
-\pendiente{Joseph analiza TCP y Mera gRPC; comparar decisiones, esfuerzo y limitaciones observadas en el código propio.}
+
+% Parte gRPC (Mera)
+En gRPC, antes de programar hubo que definir el contrato \texttt{messaging.proto} y generar el código con \texttt{grpcio-tools}, que debe regenerarse ante cualquier cambio. A cambio, el servidor solo implementa \texttt{EnviarMensaje} y el cliente lo invoca desde el stub, sin construir ni leer los mensajes, como sí ocurre en TCP con el JSON y el salto de línea. La principal dificultad fue de organización: para usar el reloj compartido de \texttt{src/common/} hubo que agregar la raíz del repositorio a \texttt{sys.path}.
+
+El contrato garantiza los tipos, por lo que el servidor gRPC no necesita las comprobaciones con \texttt{isinstance} del servidor TCP. Sin embargo, no reemplaza toda la validación: un \texttt{timestamp} negativo llega como entero válido y lo rechaza el reloj, y en proto3 un campo omitido toma su valor por defecto \cite{protobufProto3}, de modo que una solicitud sin \texttt{timestamp} llegó con valor 0 sin ningún error. En los fallos, gRPC devuelve códigos estándar con descripción: el cliente recibió \texttt{INVALID\_ARGUMENT} y el servidor siguió atendiendo, mientras que en TCP una solicitud mal formada cierra la conexión sin informar la causa. Como contrapartida, los mensajes binarios no se pueden leer a simple vista al depurar.
+
+Esta comodidad tiene un costo (tabla~\ref{tab:estadisticas_rtt}): con 100 bytes, la latencia media de gRPC fue unas 4,5 veces la de TCP (0,547\,ms frente a 0,122\,ms). Con 10\,KiB, TCP subió un 61\,\% y gRPC solo un 3\,\%, lo que sugiere que el costo adicional de gRPC es principalmente fijo por llamada.
+
+\pendiente{Joseph: análisis de facilidad de desarrollo, tipado y errores desde la implementación TCP.}
 
 \subsection{Contraste con la hipótesis inicial}
 \pendiente{Explicar si se sostuvo o se rechazó la hipótesis planteada ANTES de medir, utilizando cifras reales.}
