@@ -1,9 +1,73 @@
-% Equipo completo | Deben quedar fijadas ANTES de medir.
+
 \subsection{Objetivo general}
-\pendiente{Precisar el objetivo de implementar y comparar TCP y gRPC en tres nodos, medir latencias y verificar causalidad mediante relojes de Lamport.}
+
+Comparar el desempeño de la comunicación mediante sockets
+TCP y gRPC con Protocol Buffers en un entorno distribuido
+de tres nodos, a partir de mediciones de latencia y
+rendimiento, y comprobar el orden de los eventos mediante
+relojes lógicos de Lamport.
 
 \subsection{Objetivos específicos}
-\pendiente{Redactar objetivos medibles: arquitectura de tres nodos, dos protocolos equivalentes, 20 intercambios por mecanismo, benchmarks de 100 envíos, análisis y validación de eventos.}
+
+\begin{enumerate}
+
+    \item Configurar tres nodos independientes en
+    localhost, identificados como nodo-A, nodo-B y
+    nodo-C, y verificar el intercambio de mensajes
+    mediante sockets TCP y gRPC.
+
+    \item Registrar veinte intercambios por mecanismo
+    con sus respectivas marcas de tiempo de Lamport,
+    de manera que sea posible analizar el orden
+    de envío y recepción de los mensajes.
+
+    \item Medir la latencia de ida y vuelta (RTT)
+    con cargas útiles de 100 y 10240 bytes,
+    utilizando cinco corridas de cien envíos
+    por condición y descartando una corrida
+    previa de calentamiento.
+
+    \item Comparar la latencia media, mediana,
+    desviación estándar, percentil 95 y rendimiento
+    de ambos mecanismos a partir de los registros
+    obtenidos durante las pruebas.
+
+    \item Evaluar la comunicación con tres clientes
+    concurrentes y verificar las relaciones de
+    causalidad observables en los registros de
+    eventos.
+
+\end{enumerate}
 
 \subsection{Hipótesis previa a la experimentación}
-\pendiente{Declarar cuál tecnología se espera que tenga menor latencia y por qué; dejar registrada la hipótesis ANTES de ejecutar pruebas. Incluir qué se considera evidencia a favor/en contra.}
+
+Se plantea que la implementación con sockets TCP
+presentará una latencia media de ida y vuelta menor
+que gRPC en las pruebas realizadas sobre localhost,
+tanto para mensajes de 100 bytes como de 10240 bytes.
+
+Esta expectativa se relaciona con las características
+de las implementaciones desarrolladas. En TCP, el
+equipo construyó directamente el intercambio de
+solicitudes y respuestas mediante mensajes JSON,
+aprovechando el servicio de transporte fiable y
+orientado a conexión que proporciona el protocolo
+\cite{eddy2022tcp}. En cambio, la implementación
+gRPC utiliza llamadas a procedimientos remotos,
+mensajes definidos con Protocol Buffers y HTTP/2.
+El estudio de Niswar et al. \cite{niswar2024grpc}
+analiza el rendimiento de gRPC frente a otras
+alternativas de comunicación entre microservicios,
+lo que refuerza la necesidad de evaluar estos
+mecanismos bajo condiciones experimentales
+definidas.
+
+La hipótesis no supone que TCP sea más rápido en
+cualquier entorno. Su evaluación se limitará a las
+implementaciones del equipo y a las condiciones
+establecidas para esta práctica. Se considerará
+respaldada cuando la latencia media de TCP sea
+inferior a la de gRPC en ambos tamaños de mensaje.
+Las diferencias observadas se examinarán junto
+con la dispersión y el percentil 95 para evitar
+que la comparación dependa únicamente del promedio.
