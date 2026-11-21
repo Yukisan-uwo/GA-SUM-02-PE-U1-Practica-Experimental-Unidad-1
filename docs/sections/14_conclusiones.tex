@@ -1,5 +1,14 @@
 \subsection{Conclusiones generales con evidencia cuantitativa}
-\pendiente{Conclusiones comparativas con los porcentajes y valores que realmente arrojen las mediciones; evitar generalizaciones del tipo 'gRPC siempre es más rápido'.}
+\begin{enumerate}
+    \item Los resultados del benchmark respaldaron la hipótesis inicial de que nuestra implementación con sockets TCP presentaría una menor latencia media que gRPC en las condiciones evaluadas. Con mensajes de 100 bytes, TCP registró 0,122\,ms frente a 0,547\,ms de gRPC, mientras que con cargas de 10\,KiB los valores fueron de 0,197\,ms y 0,564\,ms, respectivamente. Esta diferencia también se observó en las medianas y los percentiles 95. Sin embargo, los resultados corresponden a las implementaciones del equipo y no demuestran que TCP sea más rápido en cualquier entorno distribuido.
+
+    \item En cuanto al rendimiento, TCP también presentó valores superiores en el experimento secuencial. Con cargas de 100 bytes alcanzó una media de 576,43 mensajes por segundo, frente a 442,64 en gRPC. Para 10\,KiB, se registraron 533,24 y 431,98 mensajes por segundo, respectivamente. Estas cifras representan un rendimiento aproximadamente 30,2\,\% y 23,4\,\% mayor para TCP en cada tamaño evaluado. No obstante, la elección de un mecanismo de comunicación también debe considerar el tipado de datos, el mantenimiento y el manejo de errores, aspectos que no quedan reflejados únicamente en estas mediciones.
+
+    \item La integración de los relojes de Lamport permitió registrar y verificar el orden causal de los eventos durante los intercambios entre tres nodos. Las corridas funcionales de TCP y gRPC completaron veinte solicitudes por mecanismo, con 80 eventos registrados y ningún error causal reportado. Además, en las cuatro pruebas concurrentes se registraron 300 solicitudes y 1200 eventos por condición, también sin errores causales detectados. Esto respalda el funcionamiento de las reglas del reloj lógico sobre los registros evaluados, aunque no demuestra tolerancia ante todos los posibles fallos de comunicación.
+
+    \item Finalmente, se comprobó la importancia de definir condiciones experimentales claras para interpretar correctamente los resultados. El benchmark se realizó sobre localhost, con mensajes secuenciales y dos tamaños de carga útil, mientras que las pruebas concurrentes se desarrollaron por separado en otro entorno. Por esta razón, sus resultados no deben mezclarse para comparar latencias o rendimiento. Como mejora futura, sería conveniente repetir las mediciones en una red física, evaluar diferentes niveles de concurrencia y aplicar pruebas controladas de caída de nodos. Esto permitiría ampliar el análisis de rendimiento y fiabilidad.
+
+\end{enumerate}
 
 \subsection{Conclusiones individuales}
 \pendiente{Según la guía: al menos 150 palabras POR INTEGRANTE, con contenido propio y relacionado con su contribución; no copiarlas entre sí.}

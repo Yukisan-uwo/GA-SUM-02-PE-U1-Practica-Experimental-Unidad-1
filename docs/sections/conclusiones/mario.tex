@@ -1,2 +1,10 @@
-% Conclusión individual: Mario
-\pendiente{Redactar mínimo 150 palabras de autoría propia. Referir decisiones, problemas concretos, pruebas y aprendizajes comprobables de la participación individual.}
+% Conclusión individual: Mario Zambrano.
+Durante esta práctica pude comprobar que la elección de un mecanismo de comunicación no debe basarse únicamente en sus características teóricas, sino también en los resultados obtenidos durante su implementación. Mi participación se centró en planificar y ejecutar el benchmark, analizar los datos registrados y documentar los resultados de latencia y rendimiento de TCP y gRPC.
+
+Una de las principales dificultades fue mantener condiciones comparables entre las pruebas y organizar los registros para que los resultados pudieran verificarse. Para ello, trabajé con cinco corridas de cien mensajes por condición, además de las ejecuciones de calentamiento, y utilicé Python para procesar las 2000 mediciones válidas. Los gráficos y las tablas me permitieron identificar diferencias que no habrían sido tan claras al revisar únicamente los archivos CSV.
+
+En las condiciones evaluadas, TCP obtuvo menores latencias medias que gRPC: 0,122\,ms frente a 0,547\,ms con mensajes de 100 bytes, y 0,197\,ms frente a 0,564\,ms con 10\,KiB. Sin embargo, comprendí que estos resultados no significan que TCP sea siempre la mejor alternativa. También deben considerarse aspectos como el mantenimiento, el tipado, el manejo de errores y las necesidades de cada aplicación.
+
+Otro aprendizaje importante fue distinguir las mediciones secuenciales de las pruebas concurrentes realizadas con tres nodos, porque sus objetivos y entornos fueron diferentes. Asimismo, al revisar los fundamentos de fallos, seguridad y CAP, entendí que la fiabilidad y la consistencia requieren mecanismos adicionales que no se resuelven solamente cambiando el protocolo de comunicación.
+
+Considero que esta experiencia me ayudó a mejorar la forma en que planifico experimentos, interpreto resultados y documento sus limitaciones. Estos criterios serán útiles para evaluar futuras decisiones técnicas en el proyecto SGRA, donde también será necesario equilibrar rendimiento, seguridad y facilidad de mantenimiento.

@@ -1,11 +1,22 @@
-% Equipo completo | Resumen y Abstract, una vez obtenidos los resultados.
 \section*{Resumen}
 \addcontentsline{toc}{section}{Resumen}
-\pendiente{Redactar el resumen en español (~200 palabras según guía; confirmar si el límite corresponde a cada idioma o a ambos). Incluir objetivo, metodología, datos reales, hallazgos principales y conclusión. No anticipar números.}
-\noindent\textbf{Palabras clave:} \pendiente{Definir 3--5 términos precisos relacionados con el trabajo terminado.}
+
+Esta práctica comparó dos mecanismos de comunicación entre procesos: sockets TCP con mensajes JSON y gRPC con Protocol Buffers. También incorporó relojes lógicos de Lamport para verificar el cumplimiento de sus reglas de ordenamiento en los eventos registrados. Se realizaron un benchmark secuencial y pruebas funcionales con tres nodos. En el benchmark, ejecutado en Windows sobre localhost, se obtuvieron 2000 mediciones de latencia de ida y vuelta (RTT): cinco corridas de 100 solicitudes por mecanismo y tamaño de carga (100 y 10240 bytes), excluyendo el calentamiento. TCP registró una latencia media de 0,122\,ms frente a 0,547\,ms de gRPC con 100 bytes; con 10240 bytes, las medias fueron 0,197 y 0,564\,ms, respectivamente. TCP también alcanzó mayor rendimiento en mensajes por segundo con ambas cargas. Las corridas funcionales de 20 intercambios por mecanismo y cuatro pruebas automatizadas concurrentes de 300 solicitudes por condición completaron los intercambios, sin errores causales reportados por el verificador de Lamport. Las pruebas concurrentes se ejecutaron en Linux y no se mezclaron con las mediciones de Windows. Los resultados respaldan la hipótesis inicial en el entorno evaluado, pero no permiten generalizar la superioridad de TCP ni demostrar tolerancia ante fallos no ensayados.
+
+\par\smallskip
+\noindent\textbf{Palabras clave:}
+sistemas distribuidos, sockets TCP, gRPC,
+relojes de Lamport, latencia.
+
+\vspace{0.6cm}
 
 \section*{Abstract}
 \addcontentsline{toc}{section}{Abstract}
-\pendiente{Traducir fielmente el resumen definitivo al inglés, sin introducir resultados nuevos.}
-\noindent\textbf{Keywords:} \pendiente{Traducción consistente de las palabras clave.}
+
+This study compared two interprocess communication mechanisms: TCP sockets with JSON messages and gRPC with Protocol Buffers. It also incorporated Lamport logical clocks to verify compliance with their ordering rules in the recorded events. A sequential benchmark and functional tests involving three nodes were conducted. In the benchmark, performed on Windows over localhost, 2000 round-trip time (RTT) measurements were collected: five runs of 100 requests for each combination of communication mechanism and payload size (100 and 10240 bytes), excluding warm-up runs. TCP achieved a mean latency of 0.122\,ms compared with 0.547\,ms for gRPC with 100-byte messages; with 10240 bytes, the means were 0.197 and 0.564\,ms, respectively. TCP also achieved higher throughput, measured in messages per second, for both payload sizes. The functional runs of 20 exchanges per mechanism and four automated concurrent tests of 300 requests per condition completed the exchanges, with no causal errors reported by the Lamport verifier. The concurrent tests were conducted on Linux and were not combined with the Windows measurements. The results support the initial hypothesis under the evaluated conditions, but do not establish that TCP is universally superior or demonstrate tolerance to failures that were not tested.
+
+\par\smallskip
+\noindent\textbf{Keywords:}
+distributed systems, TCP sockets, gRPC,
+Lamport clocks, latency.
 \clearpage

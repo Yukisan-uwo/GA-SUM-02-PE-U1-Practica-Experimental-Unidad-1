@@ -144,13 +144,47 @@ de significación estadística.
 
 Las veinte corridas del benchmark se completaron
 correctamente. En los archivos consolidados
-se registraron 2000 mediciones válidas, sin
-acuses fallidos ni latencias inválidas.
+se registraron 2000 mediciones válidas,
+sin acuses fallidos ni latencias inválidas.
 
-Sin embargo, estos resultados corresponden
-a mensajes enviados de forma secuencial entre
-el cliente identificado como \texttt{nodo-A}
-y el servidor \texttt{nodo-B}. Por esta razón,
-no permiten sacar conclusiones sobre el
-comportamiento de los tres nodos trabajando
-al mismo tiempo.
+Estos valores corresponden a mensajes enviados
+de forma secuencial entre el cliente
+\texttt{nodo-A} y el servidor \texttt{nodo-B}.
+Por tanto, las cifras de latencia y rendimiento
+presentadas anteriormente no describen por
+sí solas el comportamiento con tres clientes
+concurrentes.
+
+En las pruebas funcionales posteriores se
+registraron veinte intercambios por mecanismo,
+con tres nodos en funcionamiento. Tanto TCP
+como gRPC completaron las veinte solicitudes
+y sus acuses. Cada ejecución produjo 80
+eventos y 40 pares de envío y recepción,
+sin errores causales en el informe de
+verificación.
+
+Para evaluar la concurrencia se realizaron
+cuatro pruebas adicionales, con cargas de
+100 y 10240 bytes para ambos mecanismos.
+En cada condición se registraron 300
+solicitudes, 300 acuses y 1200 eventos.
+Los informes de verificación no reportaron
+errores causales en estas capturas.
+
+Estos resultados muestran que las
+implementaciones completaron los intercambios
+registrados bajo las condiciones probadas.
+Aunque las pruebas con tres clientes se completaron
+correctamente, no se utilizaron para comparar
+latencias ni mensajes por segundo con el benchmark
+inicial. Su objetivo fue comprobar la comunicación
+entre los nodos y verificar los relojes de Lamport,
+además de haberse ejecutado en un entorno diferente.
+
+La verificación de las reglas de Lamport,
+los ejemplos de eventos concurrentes y
+la procedencia de los registros se
+presentan con mayor detalle en la
+sección de verificación del reloj lógico.
+

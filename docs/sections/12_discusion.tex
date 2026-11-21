@@ -1,23 +1,287 @@
-% Autoría compartida: Mario coordina; cada integrante redacta análisis de su parte.
+
+% Autoría compartida: Mario coordina la discusión.
+
 \subsection{Comparación de latencia, dispersión y rendimiento}
-\pendiente{Discutir los valores obtenidos; no limitarse a repetir tablas. Comparar TCP y gRPC con 100 bytes y 10 KB.}
+
+Los resultados obtenidos permiten identificar diferencias
+entre ambas implementaciones bajo las condiciones del
+experimento. En las mediciones secuenciales sobre localhost,
+TCP presentó menores tiempos de respuesta que gRPC con los
+dos tamaños de mensaje evaluados.
+
+Con cargas de 100 bytes, la latencia media fue de
+0,122\,ms para TCP y 0,547\,ms para gRPC. Esto significa
+que el promedio de gRPC fue aproximadamente 4,48 veces
+el de TCP. Al utilizar mensajes de 10\,KiB, las medias
+aumentaron a 0,197\,ms y 0,564\,ms, respectivamente,
+reduciéndose la relación a aproximadamente 2,86 veces.
+Estos valores se presentan en la
+Tabla~\ref{tab:estadisticas_rtt}.
+
+También se observó un comportamiento diferente al
+incrementar el tamaño de la carga útil. La latencia
+media de TCP aumentó alrededor de un 61,5\,\%,
+mientras que en gRPC el incremento fue cercano
+al 3,1\,\%. Aunque esto muestra una menor variación
+de la media de gRPC entre los tamaños probados,
+no demuestra que tenga mejor escalabilidad en
+cualquier situación. Para establecerlo sería
+necesario evaluar más tamaños y condiciones de carga.
+
+La dispersión aporta otra perspectiva. Con mensajes
+de 100 bytes, gRPC registró una desviación estándar
+de 0,231\,ms, frente a 0,028\,ms en TCP. Además,
+el percentil 95 fue de 0,819\,ms para gRPC y
+0,185\,ms para TCP. Esto indica que la diferencia
+no se limitó a los promedios: también hubo una
+mayor variación en los tiempos de gRPC durante
+esa condición.
+
+Con mensajes de 10\,KiB, las desviaciones estándar
+fueron de 0,039\,ms para TCP y 0,110\,ms para gRPC.
+Los percentiles 95 se situaron en 0,282\,ms y
+0,758\,ms, respectivamente. Por tanto, TCP mantuvo
+tiempos más bajos en las medidas de tendencia
+central y en el extremo superior de la
+distribución observado mediante el P95.
+
+En cuanto al rendimiento, TCP alcanzó una media
+de 576,43 mensajes por segundo con 100 bytes,
+frente a 442,64 en gRPC. Para 10\,KiB se
+registraron 533,24 y 431,98 mensajes por segundo,
+respectivamente. En las condiciones evaluadas,
+el rendimiento de TCP fue aproximadamente un
+30,2\,\% superior con 100 bytes y un 23,4\,\%
+superior con 10\,KiB
+(Tabla~\ref{tab:rendimiento}).
+
+Estas diferencias deben interpretarse considerando
+cómo se implementaron las mediciones. TCP construye
+y serializa directamente sus mensajes JSON, mientras
+que gRPC utiliza clases generadas a partir de
+Protocol Buffers y realiza llamadas remotas sobre
+HTTP/2. Por ello, la comparación refleja el
+comportamiento conjunto de las implementaciones,
+sus bibliotecas y sus operaciones auxiliares,
+no únicamente el costo del protocolo de transporte.
+
+Las pruebas posteriores con tres nodos complementan
+estos resultados desde el punto de vista funcional.
+En las corridas de veinte intercambios, tanto TCP
+como gRPC completaron las solicitudes y sus acuses.
+Asimismo, las cuatro capturas concurrentes de
+300 solicitudes registraron 1200 eventos por
+condición, sin errores causales reportados por
+el verificador de Lamport.
+
+Sin embargo, estas pruebas utilizaron otro entorno
+y tuvieron como propósito comprobar la comunicación
+y el orden causal de los eventos. Por ello, no se
+emplearon para ampliar las muestras de latencia
+ni para comparar mensajes por segundo con el
+benchmark secuencial.
 
 \subsection{Facilidad de desarrollo, tipado y manejo de errores}
 
-% Parte gRPC (Mera)
+% Parte gRPC (Mera).
 En gRPC, antes de programar hubo que definir el contrato \texttt{messaging.proto} y generar el código con \texttt{grpcio-tools}, que debe regenerarse ante cualquier cambio. A cambio, el servidor solo implementa \texttt{EnviarMensaje} y el cliente lo invoca desde el stub, sin construir ni leer los mensajes, como sí ocurre en TCP con el JSON y el salto de línea. La principal dificultad fue de organización: para usar el reloj compartido de \texttt{src/common/} hubo que agregar la raíz del repositorio a \texttt{sys.path}.
 
 El contrato garantiza los tipos, por lo que el servidor gRPC no necesita las comprobaciones con \texttt{isinstance} del servidor TCP. Sin embargo, no reemplaza toda la validación: un \texttt{timestamp} negativo llega como entero válido y lo rechaza el reloj, y en proto3 un campo omitido toma su valor por defecto \cite{protobufProto3}, de modo que una solicitud sin \texttt{timestamp} llegó con valor 0 sin ningún error. En los fallos, gRPC devuelve códigos estándar con descripción: el cliente recibió \texttt{INVALID\_ARGUMENT} y el servidor siguió atendiendo, mientras que en TCP una solicitud mal formada cierra la conexión sin informar la causa. Como contrapartida, los mensajes binarios no se pueden leer a simple vista al depurar.
 
 Esta comodidad tiene un costo (tabla~\ref{tab:estadisticas_rtt}): con 100 bytes, la latencia media de gRPC fue unas 4,5 veces la de TCP (0,547\,ms frente a 0,122\,ms). Con 10\,KiB, TCP subió un 61\,\% y gRPC solo un 3\,\%, lo que sugiere que el costo adicional de gRPC es principalmente fijo por llamada.
 
-\pendiente{Joseph: análisis de facilidad de desarrollo, tipado y errores desde la implementación TCP.}
+\pendiente{Joseph: análisis de facilidad de desarrollo,
+tipado y manejo de errores desde TCP.}
 
 \subsection{Contraste con la hipótesis inicial}
-\pendiente{Explicar si se sostuvo o se rechazó la hipótesis planteada ANTES de medir, utilizando cifras reales.}
+
+La hipótesis planteada antes de realizar las mediciones
+establecía que la implementación con sockets TCP
+presentaría una latencia media menor que gRPC en
+localhost, tanto para mensajes de 100 bytes como
+para mensajes de 10240 bytes.
+
+Los resultados respaldaron esta expectativa dentro
+de las condiciones estudiadas. Con cargas de 100 bytes,
+TCP obtuvo una media de 0,122\,ms, inferior a los
+0,547\,ms de gRPC. La misma relación se mantuvo
+con 10\,KiB, donde TCP registró 0,197\,ms y
+gRPC 0,564\,ms.
+
+Estos resultados cumplen el criterio que se había
+establecido previamente para considerar respaldada
+la hipótesis. Además, las medianas y los percentiles
+95 mantuvieron la misma tendencia, por lo que la
+diferencia observada no dependió únicamente de
+los valores medios.
+
+No obstante, la hipótesis debe aceptarse solo
+dentro de su alcance experimental. Las mediciones
+se realizaron en una computadora, con comunicación
+local y mediante implementaciones específicas
+desarrolladas por el equipo. Tampoco se aplicó
+una prueba de significación estadística para
+generalizar las diferencias a otras poblaciones
+de ejecuciones.
+
+En consecuencia, los resultados respaldan la
+hipótesis inicial para nuestro experimento,
+pero no permiten afirmar que los sockets TCP
+ofrezcan siempre menor latencia que gRPC
+en cualquier aplicación distribuida.
 
 \subsection{Aplicación posible al Proyecto Fin de Curso}
-\pendiente{Solo vincular al PFC que efectivamente corresponda a este equipo; argumentar en qué subsistemas convendría cada mecanismo y separar decisiones de consistencia/disponibilidad del transporte.}
+
+El Proyecto Fin de Curso de un integrante del equipo corresponde
+al Sistema de Gestión de Refuerzo Académico
+(SGRA), una aplicación web orientada a gestionar
+solicitudes de refuerzo, disponibilidad docente,
+sesiones académicas, notificaciones y seguimiento
+de los estudiantes.
+
+Su arquitectura contempla una interfaz desarrollada
+con Angular, un backend con Spring Boot y una
+base de datos PostgreSQL. La comunicación entre
+el frontend y el backend se realiza mediante
+una API REST sobre HTTP. Por tanto, la práctica
+no implica sustituir automáticamente esta
+arquitectura por TCP o gRPC.
+
+Si el SGRA evolucionara hacia servicios de
+backend independientes, gRPC podría evaluarse
+para la comunicación interna entre componentes.
+Por ejemplo, un servicio encargado de gestionar
+solicitudes de refuerzo podría consultar a
+otro servicio los datos académicos necesarios
+para validar asignaturas, docentes o
+disponibilidad.
+
+En ese escenario, Protocol Buffers permitiría
+establecer contratos explícitos para las
+solicitudes y respuestas. Además, los códigos
+de estado y los límites de tiempo de gRPC
+ofrecerían mecanismos definidos para gestionar
+errores de comunicación. Esta sería una
+alternativa de diseño que requeriría pruebas
+propias antes de adoptarse.
+
+Por otro lado, los sockets TCP podrían utilizarse
+en un componente interno muy específico que
+necesitara intercambiar mensajes simples mediante
+un protocolo controlado por el equipo, como un
+mecanismo experimental de supervisión de
+conectividad. Sin embargo, habría que implementar
+la delimitación, validación, autenticación y
+gestión de errores de esos mensajes.
+
+Por estas razones, no sería conveniente reemplazar
+la API REST del SGRA por sockets TCP personalizados
+solo porque estos presentaron menor latencia en
+nuestra práctica. Para operaciones como registrar
+solicitudes, consultar historiales o gestionar
+usuarios, también deben considerarse la seguridad,
+el mantenimiento y la integración con el frontend.
+
+En cuanto al teorema CAP, su aplicación depende
+de las garantías de consistencia y disponibilidad
+de los datos distribuidos, no de escoger TCP
+o gRPC. Si en el futuro el SGRA incorporara
+réplicas de información académica o de solicitudes,
+sería necesario definir cómo actuar ante
+interrupciones de comunicación entre ellas.
+
+Por ejemplo, una solicitud de refuerzo no debería
+quedar confirmada dos veces por utilizar copias
+inconsistentes de los mismos datos. Este problema
+requiere decisiones sobre almacenamiento,
+transacciones y coordinación, independientemente
+del mecanismo empleado para transportar mensajes.
+
+En definitiva, los resultados experimentales
+sirven como referencia para analizar alternativas
+de comunicación, pero la elección tecnológica
+para el SGRA debe partir de sus requisitos
+funcionales, de seguridad y de despliegue.
 
 \subsection{Amenazas a la validez y propuestas de mejora}
-\pendiente{Interpretar efectos de equipo, localhost, ruido y número de repeticiones; identificar límites de generalización.}
+
+La principal limitación del benchmark es que las
+mediciones se realizaron sobre localhost. Esto
+eliminó factores propios de una red entre equipos,
+como la congestión, los retardos de transmisión
+entre dispositivos y las pérdidas de conectividad.
+Por tanto, las latencias obtenidas no representan
+necesariamente las que se observarían en un
+despliegue real.
+
+Otro aspecto importante es que las condiciones
+de medición no incluyeron exactamente las mismas
+operaciones internas. En TCP, la serialización
+JSON quedó dentro del intervalo medido, mientras
+que en gRPC el objeto de solicitud se construyó
+antes de iniciar el cronómetro. Además, cada
+implementación utiliza bibliotecas y formatos
+de mensajes diferentes. Esto limita la posibilidad
+de atribuir las diferencias a una sola causa.
+
+El orden de ejecución también pudo influir,
+ya que las pruebas TCP se realizaron antes
+que las de gRPC. No se midió de manera
+instrumental la actividad de otros procesos
+ni se controlaron todas las variaciones
+de carga del sistema operativo.
+
+Aunque se obtuvieron 500 mediciones por
+condición, estas proceden de cinco corridas
+consecutivas de cien solicitudes. Los valores
+tomados dentro de una misma corrida pueden
+compartir condiciones temporales, por lo que
+no deben interpretarse automáticamente como
+500 repeticiones completamente independientes.
+
+También se utilizaron únicamente dos tamaños
+de carga útil, generados mediante caracteres
+ASCII repetidos. Esta decisión permitió
+controlar la longitud de los mensajes, pero
+no representa la diversidad de estructuras
+y contenidos que intercambia una aplicación
+como el SGRA.
+
+La prueba concurrente de tres nodos se
+realizó por separado en Linux, mientras
+que el benchmark de latencia se ejecutó
+en Windows. Además, las capturas de carga
+concurrente utilizaron un inicio coordinado
+mediante barreras. Estas diferencias impiden
+atribuir directamente a la concurrencia
+los cambios que pudieran existir entre
+ambos entornos.
+
+Como mejora, se propone repetir el benchmark
+en varios equipos conectados mediante una
+red física y evaluar un mayor número de
+tamaños de mensaje. También sería conveniente
+alternar el orden de ejecución de TCP y gRPC
+y establecer puntos de inicio y finalización
+de la medición equivalentes.
+
+De igual forma, se podrían repetir las pruebas
+concurrentes bajo distintas cantidades de
+clientes y registrar tanto su rendimiento como
+sus errores. Esto permitiría estudiar el
+comportamiento ante cargas mayores, sin
+confundir la verificación funcional de los
+relojes de Lamport con la medición de latencia.
+
+Además, sería útil incorporar pruebas
+controladas de desconexión, retrasos y caída
+de nodos durante intercambios activos.
+Estas pruebas ayudarían a evaluar aspectos
+de fiabilidad que no quedan demostrados por
+el éxito de las corridas realizadas.
+
+Las mejoras propuestas no forman parte de
+los resultados ya obtenidos. Se presentan
+como posibilidades para ampliar la evaluación
+y comprobar si las tendencias observadas
+se mantienen en otros escenarios.

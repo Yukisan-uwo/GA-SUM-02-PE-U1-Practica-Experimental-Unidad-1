@@ -3,7 +3,24 @@
 \pendiente{¿Cómo afecta el número de nodos al tiempo de convergencia de los relojes Lamport? Aclarar qué se entiende por propagación/convergencia y sustentar con datos medidos, no con una sincronización física inexistente.}
 
 \subsection{Selección de sockets TCP o gRPC en el PFC y relación con CAP}
-\pendiente{¿En qué escenario del PFC usarías cada mecanismo? Justificar por interfaz y requisitos. Explicar que CAP no decide por sí solo un transporte.}
+
+En el Proyecto Fin de Curso, correspondiente al Sistema de Gestión de Refuerzo Académico (SGRA), la elección de un mecanismo de comunicación debe responder a las necesidades de cada componente. Actualmente, la aplicación utiliza Angular para el frontend, Spring Boot para el backend y una API REST para intercambiar información. Por ello, los resultados de esta práctica no justifican reemplazar directamente su arquitectura.
+
+Si en el futuro se separaran algunas funciones del backend en servicios independientes, gRPC podría ser una alternativa para su comunicación interna. Por ejemplo, el servicio encargado de gestionar solicitudes de refuerzo podría consultar a otro servicio la disponibilidad de los docentes o los datos académicos necesarios para validar una solicitud.
+
+En este escenario, Protocol Buffers permitiría definir los campos y tipos de los mensajes mediante un contrato compartido. Además, las llamadas remotas de gRPC facilitarían la organización de las operaciones entre servicios. Sin embargo, su incorporación requeriría evaluar el costo de integración, la seguridad y el rendimiento dentro del entorno real del SGRA.
+
+Los sockets TCP con un protocolo propio podrían considerarse para una comunicación interna más específica, como el intercambio de mensajes sencillos entre componentes de supervisión. No obstante, esta alternativa exigiría desarrollar y mantener la delimitación de mensajes, la validación de datos y el tratamiento de errores.
+
+En nuestro benchmark, TCP presentó una latencia media menor que gRPC en ambos tamaños evaluados. Con 100 bytes se registraron 0,122\,ms frente a 0,547\,ms, mientras que con 10\,KiB los valores fueron de 0,197\,ms y 0,564\,ms. A pesar de estas diferencias, las mediciones se realizaron sobre localhost y no permiten afirmar que TCP sea siempre la opción más conveniente para el SGRA.
+
+La relación con el teorema CAP debe analizarse por separado. Este teorema establece una limitación para los sistemas que mantienen datos distribuidos cuando ocurre una partición de red: no pueden garantizar simultáneamente consistencia fuerte y disponibilidad para todas las solicitudes. Lee et al. \cite{lee2023cap} estudian las compensaciones entre estas propiedades y los tiempos de comunicación.
+
+Por ejemplo, si el SGRA incorporara réplicas de sus datos y estas perdieran la comunicación, sería necesario decidir cómo procesar nuevas solicitudes de refuerzo. Confirmar una solicitud sin comprobar las restricciones correspondientes podría producir información inconsistente. En cambio, impedir temporalmente ciertas operaciones protegería la consistencia, pero reduciría la disponibilidad de esas funciones durante la interrupción.
+
+Este ejemplo es hipotético, ya que la práctica no implementó una base de datos replicada ni evaluó formalmente las propiedades CAP. Tampoco significa que utilizar TCP garantice consistencia o que gRPC proporcione mayor disponibilidad.
+
+En conclusión, para el SGRA conservaríamos la API REST existente mientras responda a sus requisitos. Consideraríamos gRPC si apareciera una necesidad concreta de comunicación entre servicios internos, y sockets TCP personalizados únicamente si existiera un caso que justificara controlar directamente el intercambio de mensajes. Las decisiones relacionadas con CAP deberían resolverse mediante el diseño de los datos, la coordinación entre nodos y las políticas de recuperación, independientemente del transporte utilizado.
 
 \subsection{Caída de un nodo y efectos en los timestamps}
 

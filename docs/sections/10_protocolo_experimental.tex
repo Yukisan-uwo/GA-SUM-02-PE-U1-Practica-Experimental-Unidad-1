@@ -110,19 +110,20 @@ positivos y válidos, distribuidos en cinco corridas de 100 mensajes.
 
 \subsection{Prueba simultánea de tres clientes}
 
-El benchmark de rendimiento se ejecutó mediante intercambios secuenciales entre
-un cliente y un servidor. Por este motivo, sus resultados no permiten describir
-directamente el comportamiento del sistema ante solicitudes concurrentes.
+Además del benchmark secuencial, se realizaron pruebas funcionales utilizando tres nodos en localhost. Para ejecutarlas se utilizó \texttt{analysis/run\_lamport\_experiment.py}, que inicia tres procesos independientes. Cada proceso dispone de un servidor, un cliente y su propio reloj lógico de Lamport.
 
-La rúbrica contempla una evaluación adicional con tres clientes que envíen
-mensajes simultáneamente. Esta prueba se considera independiente de las
-corridas utilizadas para comparar latencias y rendimiento.
+La comunicación se organizó en un anillo: el nodo-A envía solicitudes al nodo-B, el nodo-B al nodo-C y el nodo-C al nodo-A. Cada solicitud recibe un acuse de respuesta.
 
-Su verificación requiere examinar los acuses recibidos y los registros de
-eventos de Lamport, prestando atención al orden de los sucesos y a las
-relaciones de causalidad observables. Los resultados de esta evaluación
-se incorporarán una vez que se disponga de las evidencias de ejecución
-correspondientes.
+Como comprobación funcional se documentaron veinte intercambios por mecanismo, distribuidos entre los tres clientes en cantidades de 7, 7 y 6. Los registros correspondientes se conservaron en \texttt{data/lamport20/}, junto con los archivos de verificación y sus hashes SHA-256.
+
+También se realizaron cuatro pruebas adicionales de concurrencia, combinando TCP y gRPC con cargas útiles de 100 y 10240 bytes. En cada condición se enviaron 300 solicitudes, distribuidas en partes iguales entre los tres clientes.
+
+El lanzador utiliza barreras para coordinar el inicio de los servidores, el registro de los primeros envíos y la finalización. Este procedimiento permite estudiar eventos concurrentes, aunque no representa tráfico espontáneo ni demuestra que los envíos ocurrieran exactamente al mismo instante.
+
+Las pruebas se ejecutaron en un entorno Linux diferente del equipo Windows utilizado para medir las latencias. Las cuatro capturas de 300 solicitudes fueron ejecuciones automatizadas asistidas, cuya procedencia y comandos se documentan en \texttt{data/concurrencia/PROCEDENCIA.md}. Las corridas personales de veinte intercambios se documentaron por separado mediante capturas.
+
+Estos registros se utilizaron para verificar intercambios, acuses y relaciones causales mediante los relojes de Lamport. No se incorporaron a las 2000 mediciones RTT del benchmark, porque corresponden a condiciones y objetivos experimentales diferentes.
+
 
 \subsection{Trazabilidad y protección de los datos}
 
@@ -136,52 +137,22 @@ dentro del directorio \texttt{data/}:
     \item \texttt{runs\_grpc.csv}
 \end{itemize}
 
-Los archivos de latencia incluyen el mecanismo, tamaño del mensaje, corrida,
-intento, RTT, estado del acuse y fecha de registro. Los archivos de rendimiento
-contienen la duración de cada corrida, el número de mensajes confirmados y
-la tasa calculada en mensajes por segundo.
+Los archivos de latencia incluyen el mecanismo, tamaño del mensaje, corrida, intento, RTT, estado del acuse y fecha de registro. Los archivos de rendimiento contienen la duración de cada corrida, el número de mensajes confirmados y la tasa calculada en mensajes por segundo.
 
-El análisis se realizó mediante \texttt{analysis/analisis\_resultados.py},
-utilizando pandas y matplotlib. El programa comprobó la estructura de los
-datos, la cantidad de registros por condición y la ausencia de acuses
-fallidos o latencias inválidas. A partir de los archivos originales
-generó los resúmenes estadísticos, las tablas LaTeX y las figuras.
+El análisis se realizó mediante \texttt{analysis/analisis\_resultados.py}, utilizando pandas y matplotlib. El programa comprobó la estructura de los datos, la cantidad de registros por condición y la ausencia de acuses fallidos o latencias inválidas. A partir de los archivos originales generó los resúmenes estadísticos, las tablas LaTeX y las figuras.
 
-Los CSV consolidados se conservaron sin modificaciones manuales. También
-se calcularon sus huellas SHA-256, registradas en \texttt{data/SHA256SUMS}.
-La integridad se comprobó recalculando cada hash y comparándolo con su
-valor almacenado.
+Los CSV consolidados se conservaron sin modificaciones manuales. También se calcularon sus huellas SHA-256, registradas en \texttt{data/SHA256SUMS}. La integridad se comprobó recalculando cada hash y comparándolo con su valor almacenado.
 
-Los archivos automáticos \texttt{latencias\_*.csv} y
-\texttt{eventos\_*.csv} se mantuvieron separados de las mediciones consolidadas,
-ya que contienen también registros de calentamiento y pruebas funcionales.
+Los archivos automáticos \texttt{latencias\_*.csv} y \texttt{eventos\_*.csv} se mantuvieron separados de las mediciones consolidadas, ya que contienen también registros de calentamiento y pruebas funcionales.
 
 \subsection{Limitaciones y amenazas a la validez}
 
-Las mediciones se realizaron en localhost, por lo que no incorporan las condiciones
-de una comunicación entre computadoras a través de una red física. Factores
-como la latencia de red, la congestión o la variabilidad de los enlaces podrían
-modificar los resultados en otro entorno.
+Las mediciones se realizaron en localhost, por lo que no incorporan las condiciones de una comunicación entre computadoras a través de una red física. Factores como la latencia de red, la congestión o la variabilidad de los enlaces podrían modificar los resultados en otro entorno.
 
-Aunque ambos mecanismos utilizaron las mismas cargas útiles, sus operaciones
-internas no fueron idénticas. En TCP, la serialización JSON se realizó dentro
-del intervalo medido. En gRPC, el objeto de solicitud se construyó antes de iniciar
-el cronómetro y la llamada remota quedó incluida en la medición. En consecuencia,
-las diferencias observadas corresponden a las implementaciones evaluadas y no
-pueden atribuirse exclusivamente al protocolo de transporte.
+Aunque ambos mecanismos utilizaron las mismas cargas útiles, sus operaciones internas no fueron idénticas. En TCP, la serialización JSON se realizó dentro del intervalo medido. En gRPC, el objeto de solicitud se construyó antes de iniciar el cronómetro y la llamada remota quedó incluida en la medición. En consecuencia, las diferencias observadas corresponden a las implementaciones evaluadas y no pueden atribuirse exclusivamente al protocolo de transporte.
 
-También deben distinguirse las métricas utilizadas. El RTT individual no incluye
-todas las operaciones de registro posteriores a la recepción del acuse,
-mientras que el rendimiento considera la duración completa de cada corrida,
-incluyendo dichas operaciones.
+También deben distinguirse las métricas utilizadas. El RTT individual no incluye todas las operaciones de registro posteriores a la recepción del acuse, mientras que el rendimiento considera la duración completa de cada corrida, incluyendo dichas operaciones.
 
-Las pruebas TCP se ejecutaron antes que las de gRPC. No se controló
-instrumentalmente la actividad de otros procesos de Windows ni la
-variación de carga del procesador. La planificación de tareas del
-sistema operativo y otras actividades en segundo plano pudieron influir
-en los tiempos obtenidos.
+Las pruebas TCP se ejecutaron antes que las de gRPC. No se controló instrumentalmente la actividad de otros procesos de Windows ni la variación de carga del procesador. La planificación de tareas del sistema operativo y otras actividades en segundo plano pudieron influir en los tiempos obtenidos.
 
-Por estas razones, los resultados permiten comparar el comportamiento
-de los clientes implementados por el equipo bajo las condiciones
-específicas de esta práctica, sin establecer conclusiones generales
-sobre el rendimiento de TCP y gRPC en cualquier sistema distribuido.
+Por estas razones, los resultados permiten comparar el comportamiento de los clientes implementados por el equipo bajo las condiciones específicas de esta práctica, sin establecer conclusiones generales sobre el rendimiento de TCP y gRPC en cualquier sistema distribuido.
