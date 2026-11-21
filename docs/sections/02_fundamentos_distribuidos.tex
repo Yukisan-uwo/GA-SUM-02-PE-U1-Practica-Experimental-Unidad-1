@@ -27,7 +27,7 @@ Las transparencias buscan ocultar ciertos detalles de la distribución a quienes
 
     \item[Replicación — no ofrecida.] La existencia de tres procesos no significa que haya réplicas. En la práctica, los nodos no mantienen copias sincronizadas de un mismo conjunto de datos.
 
-    \item[Concurrencia — pendiente de comprobar.] El servidor crea un hilo por conexión. La prueba realizada hasta ahora envía mensajes uno tras otro, así que todavía no permite afirmar cómo responde el prototipo ante varios clientes simultáneos.
+    \item[Concurrencia — parcial.] El servidor TCP crea un hilo por conexión. Las corridas concurrentes automatizadas documentadas en \texttt{data/concurrencia/} usaron tres nodos y procesaron 300 solicitudes totales por condición (100 por nodo), con TCP y gRPC y cargas de 100 y 10240 bytes. Los verificadores no reportaron errores causales. Esto evidencia operación concurrente bajo esas condiciones, pero no demuestra transparencia completa de concurrencia ni manejo de datos de negocio compartidos. La procedencia de las corridas se detalla en \texttt{data/concurrencia/PROCEDENCIA.md}; no se presentan como pruebas personales realizadas en el equipo Windows.
 
     \item[Fallos — no ofrecida.] Si el servidor no responde o la conexión falla, el cliente recibe el error y lo registra. El prototipo no oculta la interrupción mediante una réplica o una recuperación automática.
 
