@@ -1,0 +1,34 @@
+COMANDO: /home/roger/UNIVERSIDAD/UNI SEM7/SISTEMAS DISTRIBUIDOS/GA-SUM - PE-U1/trabajo_repo/.venv/bin/python -B analysis/run_lamport_experiment.py --mechanism grpc --run-id personal300-20261121-175920-grpc-100 --messages 300 --size-bytes 100 --base-port 0 --output data/concurrencia/personal300-20261121-175920/grpc-100
+Inicio: 2026-11-21T18:01:34.985183-05:00
+nodo-C | PID=103280 | roger@omarchy | 2026-11-21T23:01:35.202045+00:00 | puerto=37753
+nodo-A | PID=103278 | roger@omarchy | 2026-11-21T23:01:35.202098+00:00 | puerto=34805
+nodo-B | PID=103279 | roger@omarchy | 2026-11-21T23:01:35.204883+00:00 | puerto=46593
+{
+  "valido": true,
+  "archivos": 3,
+  "eventos": 1200,
+  "pares_evaluados": 600,
+  "errores": [],
+  "ejemplo_relojes_iguales": {
+    "mecanismo": "gRPC",
+    "corrida": "personal300-20261121-175920-grpc-100",
+    "reloj": 1,
+    "eventos": [
+      {
+        "nodo": "nodo-A",
+        "secuencia": 1,
+        "evento": "envio_solicitud",
+        "id_mensaje": "personal300-20261121-175920-grpc-100:nodo-A-000001"
+      },
+      {
+        "nodo": "nodo-B",
+        "secuencia": 1,
+        "evento": "envio_solicitud",
+        "id_mensaje": "personal300-20261121-175920-grpc-100:nodo-B-000001"
+      }
+    ]
+  }
+}
+Datos de ejecución: /home/roger/UNIVERSIDAD/UNI SEM7/SISTEMAS DISTRIBUIDOS/GA-SUM - PE-U1/trabajo_repo/data/concurrencia/personal300-20261121-175920/grpc-100
+
+Código de salida: 0

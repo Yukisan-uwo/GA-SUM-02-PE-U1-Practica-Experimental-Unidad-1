@@ -1,0 +1,34 @@
+COMANDO: /home/roger/UNIVERSIDAD/UNI SEM7/SISTEMAS DISTRIBUIDOS/GA-SUM - PE-U1/trabajo_repo/.venv/bin/python -B analysis/run_lamport_experiment.py --mechanism tcp --run-id personal300-20261121-175920-tcp-10240 --messages 300 --size-bytes 10240 --base-port 0 --output data/concurrencia/personal300-20261121-175920/tcp-10240
+Inicio: 2026-11-21T18:00:27.198798-05:00
+nodo-C | PID=102538 | roger@omarchy | 2026-11-21T23:00:27.367873+00:00 | puerto=35495
+nodo-A | PID=102536 | roger@omarchy | 2026-11-21T23:00:27.367873+00:00 | puerto=41879
+nodo-B | PID=102537 | roger@omarchy | 2026-11-21T23:00:27.368649+00:00 | puerto=45351
+{
+  "valido": true,
+  "archivos": 3,
+  "eventos": 1200,
+  "pares_evaluados": 600,
+  "errores": [],
+  "ejemplo_relojes_iguales": {
+    "mecanismo": "TCP",
+    "corrida": "personal300-20261121-175920-tcp-10240",
+    "reloj": 1,
+    "eventos": [
+      {
+        "nodo": "nodo-A",
+        "secuencia": 1,
+        "evento": "envio_solicitud",
+        "id_mensaje": "personal300-20261121-175920-tcp-10240:nodo-A-000001"
+      },
+      {
+        "nodo": "nodo-B",
+        "secuencia": 1,
+        "evento": "envio_solicitud",
+        "id_mensaje": "personal300-20261121-175920-tcp-10240:nodo-B-000001"
+      }
+    ]
+  }
+}
+Datos de ejecución: /home/roger/UNIVERSIDAD/UNI SEM7/SISTEMAS DISTRIBUIDOS/GA-SUM - PE-U1/trabajo_repo/data/concurrencia/personal300-20261121-175920/tcp-10240
+
+Código de salida: 0

@@ -1,0 +1,34 @@
+{
+  "ok": true,
+  "nodes": [
+    {
+      "node": "nodo-A",
+      "pid": 102088,
+      "port": 47501,
+      "requests_sent": 100,
+      "clock": 411,
+      "ok": true
+    },
+    {
+      "node": "nodo-B",
+      "pid": 102089,
+      "port": 37051,
+      "requests_sent": 100,
+      "clock": 407,
+      "ok": true
+    },
+    {
+      "node": "nodo-C",
+      "pid": 102090,
+      "port": 49191,
+      "requests_sent": 100,
+      "clock": 412,
+      "ok": true
+    }
+  ],
+  "exitcodes": [
+    0,
+    0,
+    0
+  ]
+}

@@ -1,0 +1,32 @@
+{
+  "session": "personal300-20261121-175920",
+  "started_local": "2026-11-21T17:59:20.012927-05:00",
+  "python": "/home/roger/UNIVERSIDAD/UNI SEM7/SISTEMAS DISTRIBUIDOS/GA-SUM - PE-U1/trabajo_repo/.venv/bin/python",
+  "conditions": [
+    {
+      "mechanism": "tcp",
+      "size_bytes": 100,
+      "run_id": "personal300-20261121-175920-tcp-100",
+      "data": "data/concurrencia/personal300-20261121-175920/tcp-100"
+    },
+    {
+      "mechanism": "tcp",
+      "size_bytes": 10240,
+      "run_id": "personal300-20261121-175920-tcp-10240",
+      "data": "data/concurrencia/personal300-20261121-175920/tcp-10240"
+    },
+    {
+      "mechanism": "grpc",
+      "size_bytes": 100,
+      "run_id": "personal300-20261121-175920-grpc-100",
+      "data": "data/concurrencia/personal300-20261121-175920/grpc-100"
+    },
+    {
+      "mechanism": "grpc",
+      "size_bytes": 10240,
+      "run_id": "personal300-20261121-175920-grpc-10240",
+      "data": "data/concurrencia/personal300-20261121-175920/grpc-10240"
+    }
+  ],
+  "scope": "Lanzador iniciado desde terminal; capturas y participación pendientes de revisión. Código y preparación con asistencia de IA. No es benchmark RTT ni video."
+}

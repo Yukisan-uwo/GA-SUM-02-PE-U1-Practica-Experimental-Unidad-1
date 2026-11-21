@@ -156,3 +156,30 @@ solicitudes pertenece a las ejecuciones asistidas declaradas y conserva esa
 procedencia; no se utiliza una fotografía de otra condición como prueba de
 participación manual en esa carga. Las fotos de pruebas controladas acreditan
 su sesión específica, no el video ni el desempeño en la demostración.
+
+
+\subsection{Carga de trescientas solicitudes ejecutada por Roger}
+La sesión \path{personal300-20261121-175920} fue iniciada por Roger desde su
+terminal el 21 de noviembre de 2026 a las 17:59:20 UTC$-05:00$, con asistencia
+de IA para código, preparación y verificación. Incluye TCP y gRPC con 100 y
+10240 bytes, tres procesos y cien solicitudes por nodo en cada condición.
+Las cuatro condiciones se ejecutaron una después de otra; la concurrencia
+corresponde a los clientes dentro de cada condición.
+
+\begin{table}[htbp]
+\centering\small
+\input{tablas/concurrencia_personal/personal300-20261121-175920/concurrencia_resumen.tex}
+\caption{Carga personal de Roger: conteos regenerados desde los CSV originales.}
+\label{tab:carga-personal-roger}
+\end{table}
+
+Cada condición completó 300 solicitudes y 300 acuses, con 1200 eventos y 600
+pares, sin errores detectados por el verificador. El generador de resúmenes
+recalculó hashes y verificaciones antes de emitir las tablas. La consulta
+posterior comprobó 24 archivos originales de las cuatro condiciones.
+Los CSV están en \path{data/concurrencia/personal300-20261121-175920/} y
+las cinco capturas y logs se indexan en \path{docs/EVIDENCIAS_CARGA_300.md}.
+Esta nueva sesión acredita la ejecución personal de esa carga; no cambia la
+procedencia de los datos asistidos anteriores, que se conservan separados.
+Una corrida por condición no constituye un estudio estadístico de rendimiento
+ni sustituye el video y la explicación individual.

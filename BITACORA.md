@@ -192,3 +192,13 @@
 - **Solución y comprobación:** Se conservó el envío B→C sin recepción después de la caída; B avanzó de 7 a 8 y el enlace A–B siguió respondiendo. El analizador confirmó los 32 casos y los 171 archivos del manifiesto personal. Las consultas posteriores de resultados y hashes se identificaron como tales. Las tablas publicadas se regeneraron exclusivamente desde la sesión personal.
 - **Evidencias:** `docs/EVIDENCIAS_CONTROLADAS.md`, `data/controlados/personal-20261121-152127/` y `docs/evidencias/Roger/controlados/`.
 - **Tiempo total de trabajo:** no registrado; no se estima a partir de la duración de los programas.
+
+
+### 2026-11-21 · Roger — carga personal de 300 solicitudes
+- **Participación documentada:** Roger; código, guion y preparación con asistencia de IA. No se afirma presencia de otros integrantes.
+- **Sesión:** `personal300-20261121-175920`, iniciada a las 17:59:20 UTC−05:00.
+- **Qué se hizo:** Se ejecutaron cuatro condiciones: TCP y gRPC, con 100 y 10240 bytes, tres nodos y 300 solicitudes totales por condición (100 por nodo). Las condiciones se ejecutaron secuencialmente y se conservaron cinco capturas y cinco logs.
+- **Comprobación:** Los reportes registran 300 acuses, 1200 eventos, 600 pares y cero errores detectados por condición. El resumen volvió a comprobar hashes y causalidad; la consulta posterior confirmó los 24 archivos originales de las cuatro condiciones.
+- **Evidencias:** `docs/EVIDENCIAS_CARGA_300.md`, `data/concurrencia/personal300-20261121-175920/` y `docs/evidencias/Roger/carga300/personal300-20261121-175920/`.
+- **Alcance:** Sesión separada de las capturas asistidas anteriores y del benchmark RTT. La consulta del resumen y hashes no fue otra corrida. El video grupal sigue pendiente.
+- **Tiempo total de trabajo:** no registrado; no se infiere de las horas de ejecución.

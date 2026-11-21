@@ -1,0 +1,5 @@
+COMANDO: /home/roger/UNIVERSIDAD/UNI SEM7/SISTEMAS DISTRIBUIDOS/GA-SUM - PE-U1/trabajo_repo/.venv/bin/python -B analysis/summarize_concurrency.py data/concurrencia/personal300-20261121-175920/tcp-100 data/concurrencia/personal300-20261121-175920/tcp-10240 data/concurrencia/personal300-20261121-175920/grpc-100 data/concurrencia/personal300-20261121-175920/grpc-10240 --output docs/tablas/concurrencia_personal/personal300-20261121-175920
+Inicio: 2026-11-21T18:02:04.855297-05:00
+Resumen reproducible generado en docs/tablas/concurrencia_personal/personal300-20261121-175920
+
+Código de salida: 0

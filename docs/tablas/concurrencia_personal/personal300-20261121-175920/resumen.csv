@@ -1,0 +1,5 @@
+corrida,mecanismo,carga_bytes,solicitudes,acuses,eventos,pares,errores_causales,procesos,fuente
+personal300-20261121-175920-tcp-100,TCP,100,300,300,1200,600,0,3,data/concurrencia/personal300-20261121-175920/tcp-100
+personal300-20261121-175920-tcp-10240,TCP,10240,300,300,1200,600,0,3,data/concurrencia/personal300-20261121-175920/tcp-10240
+personal300-20261121-175920-grpc-100,gRPC,100,300,300,1200,600,0,3,data/concurrencia/personal300-20261121-175920/grpc-100
+personal300-20261121-175920-grpc-10240,gRPC,10240,300,300,1200,600,0,3,data/concurrencia/personal300-20261121-175920/grpc-10240

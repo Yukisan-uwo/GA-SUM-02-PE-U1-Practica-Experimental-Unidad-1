@@ -126,3 +126,15 @@ python analysis/analyze_controlled_checks.py data/controlados/personal-r02 --out
 La prueba termina deliberadamente el proceso C de su propio grupo de prueba;
 no termina servidores ajenos. Usa puertos libres y nuevos procesos. No modificar
 los CSV incompletos: el envío fallido es parte de la evidencia, no un dato a borrar.
+
+
+## Carga personal de Roger: 300 solicitudes
+
+Sesión `personal300-20261121-175920`: TCP/gRPC con 100 y 10240 bytes;
+300 solicitudes totales por condición, cien por cada uno de los tres nodos.
+Datos en `data/concurrencia/personal300-20261121-175920/`; resúmenes derivados en
+`docs/tablas/concurrencia_personal/personal300-20261121-175920/`.
+Las cinco capturas, logs, procedencia y reproducción se describen en
+[Evidencias personales de carga](docs/EVIDENCIAS_CARGA_300.md).
+Las corridas asistidas anteriores permanecen separadas. Esta sesión no sustituye
+el video grupal, cuyo enlace sigue pendiente.
