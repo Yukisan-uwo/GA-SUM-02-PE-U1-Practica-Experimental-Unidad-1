@@ -1,4 +1,4 @@
-% Desarrollo con asistencia de IA; revisar con el diseño original del equipo.
+% Desarrollo con asistencia de IA; arquitectura contrastada con el código ejecutado.
 \subsection{Tres nodos con estado independiente}
 La ejecución funcional crea tres procesos mediante \texttt{multiprocessing}
 con el método \texttt{spawn}. Cada proceso representa un nodo y aloja un
@@ -19,9 +19,10 @@ entre los hilos de su propio proceso; las flechas representan solicitudes.}
 \label{fig:arquitectura}
 \end{figure}
 
-\pendiente{Contrastar este diagrama implementado con el diagrama original de
-FORM-TL-01 antes de cerrar el informe. No se ha supuesto que ambas versiones
-coincidan.}
+El diagrama representa la estructura implementada por
+\path{analysis/run_lamport_experiment.py}. Los nombres, PID, puertos y roles
+se contrastan con los registros de las corridas personales de veinte intercambios
+en \path{data/lamport20/}. No se infieren componentes o propiedades ajenas al código.
 
 \subsection{Mensajes y correlación}
 TCP conserva \texttt{sender}, \texttt{timestamp} y \texttt{message} en JSON

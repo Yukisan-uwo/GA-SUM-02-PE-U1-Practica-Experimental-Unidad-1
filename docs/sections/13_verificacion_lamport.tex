@@ -143,14 +143,16 @@ separadamente en \path{data/controlados/r01/} y no se mezcla con estas medicione
 La variación del número de nodos se presenta en el anexo, sin interpretar Lamport
 como sincronización física.
 
-\subsection{Límites y evidencias pendientes}
+\subsection{Alcance de las evidencias y límites}
 El éxito de estas capturas acredita consistencia del reloj sobre los eventos
 registrados y entrega de los acuses bajo esa carga, no ausencia de todos los
 fallos posibles. Solo hay una captura por condición de concurrencia y el arranque
 está sincronizado; no se extraen conclusiones estadísticas de rendimiento ni
 se mezclan las máquinas Linux y Windows en una comparación de latencias.
 
-\pendiente{Añadir la evidencia personal de carga de trescientas solicitudes.
-Las capturas de veinte intercambios y de pruebas controladas ya están identificadas;
-no presentar tests o ejecuciones asistidas de otra condición como participación
-humana acreditada.}
+Las capturas personales de veinte intercambios documentan el arranque coordinado
+de tres clientes, además de sus verificaciones. La carga adicional de trescientas
+solicitudes pertenece a las ejecuciones asistidas declaradas y conserva esa
+procedencia; no se utiliza una fotografía de otra condición como prueba de
+participación manual en esa carga. Las fotos de pruebas controladas acreditan
+su sesión específica, no el video ni el desempeño en la demostración.

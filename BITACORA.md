@@ -1,6 +1,6 @@
 # Bitácora del equipo
 
-**Integrantes:** Joseph (`JosephACS`) · Mera Jumbo Allison (`ameraj2-bit`) · Roger [apellido] · Mario Zambrano (`Yukisan-uwo`)
+**Integrantes:** Joseph (`JosephACS`) · Mera Jumbo Allison (`ameraj2-bit`) · Roger Steven Garcia Sangoquiza (`Esteiben`) · Mario Zambrano (`Yukisan-uwo`)
 
 ## Formato de cada entrada
 
@@ -173,11 +173,22 @@
 - **Solución y comprobación:** Configuré `.gitattributes` para evitar la conversión automática de saltos de línea en los cuatro CSV. Utilicé `git add --renormalize` y `git ls-files --eol` para comprobar que los archivos se almacenaran con CRLF. Posteriormente, verifiqué sus hashes SHA-256 y obtuve resultados correctos (`OK`) en los cuatro casos. Finalmente, publiqué el commit y comprobé en GitHub que los archivos conservaran su formato original. No fue necesario modificar los valores registrados ni repetir las mediciones.
 - **Tiempo dedicado:** 38 minutos.
 
-### 2026-11-21 · Mario Zambrano
+### 2026-11-21 · Roger — corridas personales de veinte intercambios
+- **Participación documentada:** Roger, con asistencia de IA para preparación y verificación. No se afirma presencia de otros integrantes.
+- **Referencias de ejecución:** gRPC `grpc20-20261121-002802`, inicio registrado a las 00:28:09 UTC−05:00; TCP `tcp20-20261121-003058`, a las 00:31:03 UTC−05:00.
+- **Commit:** `1e7249f` — Publica veinte intercambios TCP y gRPC verificados.
+- **Qué se hizo:** Se ejecutó el lanzador de tres nodos con veinte solicitudes totales por mecanismo, cargas de 100 bytes y reparto 7/7/6. Se guardaron los CSV, metadatos, logs, hashes y capturas personales; el reporte se generó por script.
+- **Problemas encontrados:** Activación del entorno desde fish, falta de grpcio al usar el intérprete equivocado y necesidad de distinguir corridas nuevas de consultas a datos ya guardados.
+- **Solución y comprobación:** Se utilizó el intérprete `.venv/bin/python` con las dependencias del equipo y carpetas exclusivas por corrida. Cada corrida seleccionada confirmó veinte acuses, ochenta eventos y cuarenta pares, sin errores detectados por el verificador; los hashes coincidieron. Los intentos anteriores no se presentaron como las corridas seleccionadas.
+- **Evidencias:** `docs/EVIDENCIAS_20_INTERCAMBIOS.md` y `data/lamport20/`.
+- **Tiempo total de trabajo:** no registrado; no se deduce de las horas de las capturas.
 
-- **Integrantes presentes:** Mario Zambrano.
-- **Commit(s):** `2088bb8` — Completo mis aportes, declaración de IA y corrijo el código de la actividad.
-- **Qué se hizo:** Completé mi fila en la tabla de aportes del informe LaTeX, donde describí las actividades que realicé durante la práctica e incorporé enlaces a diez commits significativos de GitHub. También agregué mi declaración individual sobre el uso de ChatGPT como herramienta de apoyo en el desarrollo del benchmark, la interpretación de los resultados y la revisión de la documentación. Además, corregí el código de la actividad de GA-SUM-01 a GA-SUM-02 en la portada y los encabezados del documento, de acuerdo con la información publicada en el SGA.
-- **Problema encontrado:** Al revisar los apartados finales del informe, observé que mi fila de aportes todavía no tenía enlaces a los commits realizados y que faltaba documentar mi utilización de herramientas de inteligencia artificial. También existía una diferencia entre el código de la actividad del informe y el registrado en el SGA.
-- **Solución y comprobación:** Revisé mi historial de GitHub para seleccionar diez commits representativos de las distintas etapas del trabajo y los incorporé como enlaces verificables en la tabla de aportes. Redacté mi declaración de IA y actualicé el código oficial de la actividad en el archivo `main.tex`.
-- **Tiempo dedicado:** 28 minutos.
+### 2026-11-21 · Roger — caída controlada y recorrido causal
+- **Participación documentada:** Roger, con asistencia de IA para desarrollo y verificación. No se afirma presencia de otros integrantes.
+- **Sesión:** `personal-20261121-152127`, inicio registrado a las 15:21:27 UTC−05:00.
+- **Commit:** `282fe8c` — Valida caidas y propagacion causal entre los nodos.
+- **Qué se hizo:** Se ejecutaron dos casos de caída controlada y treinta cadenas causales: TCP/gRPC con 2, 3 y 5 nodos, cinco repeticiones. Se generaron resúmenes y se conservaron cuatro capturas y un log de la sesión personal.
+- **Problemas encontrados:** Distinguir el fallo previsto al terminar C de un error del ejecutor, y mantener separadas las sesiones asistidas anteriores de los resultados personales.
+- **Solución y comprobación:** Se conservó el envío B→C sin recepción después de la caída; B avanzó de 7 a 8 y el enlace A–B siguió respondiendo. El analizador confirmó los 32 casos y los 171 archivos del manifiesto personal. Las consultas posteriores de resultados y hashes se identificaron como tales. Las tablas publicadas se regeneraron exclusivamente desde la sesión personal.
+- **Evidencias:** `docs/EVIDENCIAS_CONTROLADAS.md`, `data/controlados/personal-20261121-152127/` y `docs/evidencias/Roger/controlados/`.
+- **Tiempo total de trabajo:** no registrado; no se estima a partir de la duración de los programas.

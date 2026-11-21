@@ -101,3 +101,26 @@ python src/grpc/client_grpc.py --sender nodo-A --receiver nodo-B --size-bytes 10
 En TCP el procedimiento es el mismo con \texttt{src/sockets/server.py --node nodo-B --port 5001} y \texttt{src/sockets/client.py}, que acepta las mismas opciones \texttt{--size-bytes}, \texttt{--count} y \texttt{--run}. Los clientes escriben sus registros en \texttt{data/}; esos archivos de demostración no forman parte de los datos entregados y no se suben al repositorio.
 
 \pendiente{Añadir la URL del video de 3 a 5 minutos, con rostro y voz de los cuatro integrantes, y enlazarlo también en README.md.}
+
+\subsection{Evidencias de la contribución de Roger}
+Las corridas personales de veinte intercambios se conservan en
+\path{data/lamport20/grpc-20261121-002802/} y
+\path{data/lamport20/tcp-20261121-003058/}. En ambos casos se registraron tres
+procesos con servidor y cliente, veinte solicitudes, sus acuses y los eventos
+reales de Lamport. El reporte reproducible está en
+\path{docs/tablas/lamport20/resumen.md}; las imágenes y logs originales están
+indexados en \path{docs/EVIDENCIAS_20_INTERCAMBIOS.md}.
+
+La sesión personal de caída y recorrido causal se conserva en
+\path{data/controlados/personal-20261121-152127/}. Sus cuatro capturas y log se
+describen en \path{docs/EVIDENCIAS_CONTROLADAS.md}; las tablas se generan mediante
+\path{analysis/analyze_controlled_checks.py}. Las capturas de consulta posteriores
+a la ejecución se identifican como tales. Los datos asistidos anteriores se
+conservan separados y no se presentan como sesiones manuales.
+
+Los archivos de evidencia de Roger están cubiertos por los manifiestos de
+\path{docs/evidencias/Roger/lamport20/} y
+\path{docs/evidencias/Roger/controlados/}. Los CSV y metadatos originales tienen
+sus propios manifiestos dentro de \path{data/}. No se reconstruyeron imágenes
+ni se completaron recepciones inexistentes para aprobar las verificaciones.
+La reproducción se realiza con los comandos del README y de los índices citados.

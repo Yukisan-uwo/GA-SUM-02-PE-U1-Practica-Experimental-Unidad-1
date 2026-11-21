@@ -1,2 +1,20 @@
-% Conclusión individual: Roger
-\pendiente{Redactar mínimo 150 palabras de autoría propia. Referir decisiones, problemas concretos, pruebas y aprendizajes comprobables de la participación individual.}
+% Borrador aportado por Roger; precisión y formato revisados con asistencia de IA.
+Durante esta práctica, mi responsabilidad fue trabajar con el reloj lógico de
+Lamport, integrar su funcionamiento en cada nodo, registrar los eventos y verificar
+los resultados. Aprendí que cada nodo necesita su propio reloj porque los procesos
+funcionan de manera independiente. También comprendí que el servidor y el cliente
+de un mismo nodo deben compartir el contador para mantener un orden coherente.
+Antes no tenía tan claro cómo se relacionaban los eventos entre distintos procesos,
+pero ahora entiendo mejor el concepto de causalidad.
+
+Una de las dificultades fue diferenciar un error del programa de un fallo esperado
+durante las pruebas. Cuando se detuvo el nodo C, observé que B registró el envío
+fallido y que su reloj avanzó de 7 a 8. Al revisar los registros, comprobé que la
+comunicación entre A y B continuaba funcionando, lo que me permitió entender mejor
+el comportamiento del sistema.
+
+En cada corrida funcional de TCP y gRPC se completaron 20 solicitudes y 20 acuses,
+con 80 eventos y 40 pares, sin errores de causalidad detectados por el verificador.
+Esta experiencia me permitió comprender que Lamport ordena eventos, pero no
+sincroniza la hora real. Considero que una mejora sería automatizar más
+verificaciones para facilitar la detección de errores.
