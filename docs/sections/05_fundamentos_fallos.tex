@@ -1,12 +1,259 @@
-% Autoría principal: Mario. Revisar en equipo.
+% Autoría principal: Mario Zambrano.
+
 \subsection{Clasificación de fallos}
-\pendiente{Definir fallos crash, omisión, temporización y bizantinos con ejemplos.}
+
+En un sistema distribuido, los componentes pueden
+presentar fallos de distintas formas. Un servidor
+puede dejar de funcionar, perder una comunicación
+o responder fuera del tiempo esperado. Por eso,
+antes de establecer una solución, es importante
+identificar qué tipo de fallo se quiere tratar.
+Nogueira y Coelho \cite{nogueira2026fault}
+explican que las técnicas de recuperación dependen
+del modelo de fallos considerado.
+
+Entre los principales tipos se encuentran:
+
+\begin{itemize}
+
+    \item \textbf{Fallo por caída (\textit{crash}):}
+    ocurre cuando un proceso deja de ejecutarse
+    y ya no responde a las solicitudes. En nuestra
+    práctica, una situación de este tipo sería
+    detener el servidor del nodo-B mientras otro
+    nodo intenta comunicarse con él.
+
+    \item \textbf{Fallo por omisión:}
+    se presenta cuando un proceso no realiza un
+    envío o una recepción que debía efectuar.
+    Para el cliente, uno de los posibles síntomas
+    es no recibir la respuesta esperada, aunque
+    esto no permite determinar por sí solo la
+    causa del problema.
+
+    \item \textbf{Fallo de temporización:}
+    aparece cuando una operación se completa
+    fuera del intervalo de tiempo establecido.
+    La respuesta puede ser correcta, pero llegar
+    demasiado tarde para resultar útil.
+
+    \item \textbf{Fallo bizantino:}
+    se produce cuando un nodo presenta un
+    comportamiento arbitrario. Por ejemplo,
+    podría enviar información contradictoria
+    a distintos participantes sin dejar de
+    funcionar.
+\end{itemize}
+
+Los fallos por caída, omisión y temporización
+forman parte de los modelos que Nogueira y
+Coelho \cite{nogueira2026fault} distinguen
+en su estudio sobre tolerancia a fallos.
+Por su parte, Zhong et al.
+\cite{zhong2023byzantine} explican el
+problema de los nodos bizantinos al
+analizar algoritmos que deben alcanzar
+consenso incluso cuando existen
+participantes defectuosos.
+
+Nuestro prototipo permite observar algunos
+errores de comunicación, pero no implementa
+consenso bizantino ni mecanismos para
+tolerar cualquier tipo de fallo.
 
 \subsection{Detección, recuperación y fiabilidad}
-\pendiente{Discutir timeout, manejo de excepciones, reintentos y limitaciones del prototipo realmente implementado.}
+
+Cuando un cliente no recibe una respuesta,
+no siempre es posible saber qué ocurrió.
+El servidor pudo detenerse, la comunicación
+pudo interrumpirse o la solicitud pudo
+tardar más de lo esperado. Duarte et al.
+\cite{duarte2023detectors} explican que,
+en los sistemas asíncronos, resulta difícil
+distinguir entre un proceso que ha fallado
+y otro que simplemente responde con lentitud.
+
+Una forma de controlar estas situaciones es
+establecer tiempos de espera. En nuestra
+implementación, los clientes TCP y gRPC
+utilizan un límite de dos segundos.
+El cliente TCP captura excepciones
+relacionadas con la conexión y la lectura
+de mensajes, mientras que gRPC permite
+identificar errores producidos durante
+las llamadas remotas.
+
+Estos errores pueden registrarse en los
+archivos de latencia, lo que permite
+separar las solicitudes correctas de
+aquellas que terminaron con problemas.
+Sin embargo, identificar un error no
+significa que el servicio se haya
+recuperado.
+
+Entre las técnicas de recuperación se
+encuentran los reintentos, el reinicio
+de componentes y el uso de réplicas.
+Nogueira y Coelho \cite{nogueira2026fault}
+distinguen la recuperación de un servicio
+de la recuperación de su estado, ya que
+reiniciar un proceso no garantiza que
+se conserven los datos o mensajes
+pendientes.
+
+En el trabajo de Marletta et al.
+\cite{marletta2024robustness} se presenta
+una solución que modifica llamadas remotas
+en aplicaciones Java e incorpora políticas
+de reintentos. Los autores muestran una
+configuración con esperas progresivas y
+un número máximo de intentos para
+controlar fallos temporales.
+
+En nuestro caso no se implementó una
+política propia de reintentos automáticos
+ni un mecanismo de recuperación mediante
+réplicas. Los clientes pueden detectar y
+registrar determinados errores, pero
+todavía no cuentan con una solución que
+garantice la continuidad del servicio
+cuando un nodo deja de funcionar.
 
 \subsection{Seguridad: JWT y OAuth 2.0}
-\pendiente{Presentación conceptual exigida por la guía; no afirmar que el prototipo usa autenticación si no la implementa.}
+
+La seguridad de un sistema distribuido
+no depende únicamente de que los mensajes
+lleguen correctamente. También es necesario
+comprobar quién solicita una operación
+y si tiene permiso para realizarla.
+
+La autenticación permite comprobar la
+identidad de un usuario o proceso,
+mientras que la autorización determina
+qué recursos puede utilizar. Bucko et al.
+\cite{bucko2023jwt} explican esta
+diferencia y presentan una aplicación
+web que utiliza JWT como parte de su
+mecanismo de control de acceso.
+
+JSON Web Token (JWT) permite representar
+información mediante un token que contiene
+declaraciones sobre su portador. En las
+implementaciones con firma, esta puede
+utilizarse para comprobar que el contenido
+no fue modificado. El token también puede
+contener datos como el identificador del
+usuario o su tiempo de expiración.
+Bucko et al. \cite{bucko2023jwt}
+describen su utilización en el proceso
+de autenticación y autorización de
+una aplicación web.
+
+OAuth 2.0 cumple una función diferente.
+Es un marco de autorización que permite
+conceder acceso limitado a determinados
+recursos sin entregar directamente las
+credenciales del usuario a la aplicación
+que solicita el acceso.
+
+Almeida y Canedo
+\cite{almeida2022authmicroservices}
+identifican OAuth 2.0 y JWT entre los
+mecanismos utilizados para proteger
+aplicaciones basadas en microservicios.
+También explican que ambos pueden
+emplearse conjuntamente, aunque uno
+establece un mecanismo de autorización
+y el otro define un formato de token.
+
+La seguridad de los tokens requiere
+validaciones adecuadas y protección
+durante su transmisión. Por ejemplo,
+una firma digital no reemplaza el
+cifrado del canal de comunicación.
+
+En nuestra práctica, los mensajes TCP
+se intercambian mediante JSON y las
+llamadas gRPC utilizan Protocol Buffers.
+No se implementaron JWT, OAuth 2.0
+ni un mecanismo de autenticación de
+usuarios. Además, las conexiones se
+realizaron en localhost sin configurar
+TLS.
+
+Por tanto, estas tecnologías se estudian
+como alternativas para proteger una
+aplicación distribuida que deba gestionar
+usuarios, permisos y acceso a servicios,
+pero no forman parte de las funciones
+implementadas en esta práctica.
 
 \subsection{CAP y ejemplos de aplicaciones reales}
-\pendiente{Vincular el alcance formal de CAP con sistemas que admiten particiones de red. Evitar interpretar CAP como comparación directa entre TCP y gRPC.}
+
+El teorema CAP explica una limitación
+de los sistemas distribuidos que
+mantienen información compartida entre
+varios nodos. Sus tres propiedades son
+consistencia, disponibilidad y tolerancia
+a particiones de red.
+
+La consistencia está relacionada con
+mantener una visión coherente de los
+datos compartidos. La disponibilidad
+se refiere a la capacidad de responder
+a las solicitudes, mientras que una
+partición ocurre cuando se interrumpe
+la comunicación entre grupos de nodos.
+
+Durante una partición, un sistema no
+puede garantizar al mismo tiempo
+consistencia fuerte y disponibilidad
+para todas las solicitudes. Lee et al.
+\cite{lee2023cap} estudian esta
+relación y muestran cómo los requisitos
+de consistencia y disponibilidad
+también se relacionan con la latencia
+de comunicación.
+
+Este problema puede observarse, por
+ejemplo, en una aplicación que mantiene
+copias del inventario de una tienda
+en distintos servidores. Si estos
+pierden la comunicación, aceptar
+nuevas compras sin confirmar las
+existencias podría ocasionar datos
+inconsistentes. Una alternativa
+sería detener temporalmente ciertas
+operaciones hasta recuperar la
+comunicación.
+
+En cambio, una aplicación de
+publicaciones podría permitir que
+los usuarios continúen registrando
+contenido durante una interrupción.
+Para hacerlo tendría que aceptar
+diferencias temporales entre las
+copias y resolverlas posteriormente.
+
+Los casos anteriores son ejemplos
+hipotéticos. Su finalidad es mostrar
+que las decisiones sobre consistencia
+y disponibilidad dependen de las
+necesidades de cada aplicación.
+
+Es importante aclarar que CAP no
+determina si conviene utilizar sockets
+TCP o gRPC. Ambos son mecanismos de
+comunicación, mientras que CAP trata
+sobre las garantías de un sistema que
+mantiene datos distribuidos.
+
+En nuestra práctica se compararon
+latencias y rendimiento de TCP y gRPC,
+y se incorporaron relojes de Lamport
+para registrar el orden de los eventos.
+No se implementó una base de datos
+replicada ni se evaluaron formalmente
+las propiedades del teorema CAP.
+Por esta razón, su aplicación en
+el informe es conceptual.
