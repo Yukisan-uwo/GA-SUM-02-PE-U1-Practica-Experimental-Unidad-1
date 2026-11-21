@@ -1,12 +1,43 @@
-% Autoría principal: Joseph. Revisar en equipo.
 \subsection{Sistemas distribuidos y características fundamentales}
-\pendiente{Definición formal, propiedades, ventajas, limitaciones y retos; citas bibliográficas comprobadas.}
 
-\subsection{Transparencias ANSA}
-\pendiente{Explicar acceso, ubicación, migración, reubicación, replicación, concurrencia, fallos y persistencia. Conectar más adelante con el sistema realmente implementado.}
+Un sistema distribuido está formado por varios elementos de cómputo autónomos que se comunican por una red y colaboran para ofrecer servicios. Aunque los procesos y recursos estén repartidos entre varios equipos, el sistema busca que el usuario pueda utilizar sus servicios de manera coherente. Esa distribución permite compartir recursos y dividir tareas, pero también introduce latencias, comunicación entre procesos y fallos que pueden afectar solo a una parte del sistema \cite{vanSteenTanenbaum2023}.
+
+Cada nodo ejecuta sus propios procesos y mantiene su estado local. Por eso, los nodos deben intercambiar mensajes para coordinar operaciones; no pueden asumir que todos observan los eventos al mismo tiempo ni que una demora significa necesariamente que otro nodo dejó de funcionar. La coordinación, la concurrencia y la detección de fallos son parte del diseño del sistema distribuido \cite{vanSteenTanenbaum2023}.
 
 \subsection{Sistemas centralizados, paralelos y distribuidos}
-\pendiente{Comparación sustentada, sin confundir paralelismo con distribución.}
+
+En un sistema centralizado, el procesamiento y la administración principal de los recursos se concentran en un equipo o servicio. Los clientes envían solicitudes a ese punto central. Su operación es más sencilla de organizar, aunque ese punto puede convertirse en un límite de capacidad o en una causa de interrupción si falla.
+
+Un sistema paralelo divide una tarea para ejecutar varias partes al mismo tiempo. El paralelismo describe cómo se organiza el procesamiento; puede ocurrir dentro de una computadora o entre varias. En un sistema distribuido, en cambio, los nodos son unidades independientes que se comunican mediante una red. Por ello, un sistema puede ser distribuido y también aprovechar el paralelismo \cite{vanSteenTanenbaum2023}.
+
+En esta práctica, los procesos se identifican como \texttt{nodo-A}, \texttt{nodo-B} y \texttt{nodo-C}. Se ejecutan en \texttt{localhost}, cada uno con un puerto definido. El escenario permite estudiar el intercambio de mensajes entre procesos, aunque no equivale a desplegar los nodos en máquinas físicas distintas.
+
+\subsection{Transparencias ANSA}
+
+Las transparencias buscan ocultar ciertos detalles de la distribución a quienes usan el sistema. El prototipo no las ofrece todas; algunas se observan de forma parcial y otras no están implementadas \cite{vanSteenTanenbaum2023}.
+
+\begin{description}
+    \item[Acceso — parcial.] El benchmark utiliza una interfaz común para enviar mensajes con TCP y gRPC. Sin embargo, todavía se debe escoger el cliente correspondiente a cada mecanismo y cada uno usa una representación distinta del mensaje.
+
+    \item[Ubicación — no ofrecida.] Los nodos se identifican mediante nombres, direcciones y puertos. Para conectar el cliente se indica explícitamente el destino, por ejemplo, \texttt{127.0.0.1:5001}.
+
+    \item[Migración — no ofrecida.] El prototipo no traslada procesos o recursos de un nodo a otro mientras mantiene su acceso.
+
+    \item[Reubicación — no ofrecida.] Tampoco mueve un servicio durante una operación activa de forma que el cliente no lo note.
+
+    \item[Replicación — no ofrecida.] La existencia de tres procesos no significa que haya réplicas. En la práctica, los nodos no mantienen copias sincronizadas de un mismo conjunto de datos.
+
+    \item[Concurrencia — pendiente de comprobar.] El servidor crea un hilo por conexión. La prueba realizada hasta ahora envía mensajes uno tras otro, así que todavía no permite afirmar cómo responde el prototipo ante varios clientes simultáneos.
+
+    \item[Fallos — no ofrecida.] Si el servidor no responde o la conexión falla, el cliente recibe el error y lo registra. El prototipo no oculta la interrupción mediante una réplica o una recuperación automática.
+
+    \item[Persistencia — no ofrecida como transparencia.] El programa guarda registros de eventos y latencias en archivos CSV locales. Ese registro no constituye una capa de almacenamiento que oculte al cliente dónde o cómo se conserva la información.
+\end{description}
 
 \subsection{Teorema CAP: conceptos y alcance}
-\pendiente{Definir consistencia, disponibilidad y tolerancia a particiones; reservar la aplicación al PFC para discusión.}
+
+CAP describe un compromiso que aparece cuando una partición de red impide que algunos nodos se comuniquen. La consistencia exige que las operaciones se comporten como si se hubieran aplicado en un orden común; la disponibilidad exige que cada solicitud dirigida a un nodo que sigue activo reciba una respuesta. La tolerancia a particiones se refiere a que el sistema continúe operando ante esa pérdida de comunicación.
+
+Cuando existe una partición, un sistema no puede garantizar simultáneamente consistencia y disponibilidad para todas las solicitudes. Debe decidir cómo responder mientras dure el problema: puede rechazar o demorar ciertas operaciones para conservar consistencia, o responder aunque algunos datos todavía no estén actualizados. CAP trata de este escenario de partición; no significa que cualquier sistema simplemente escoja dos propiedades en toda situación \cite{lee2023cap,vanSteenTanenbaum2023}.
+
+La clasificación de un sistema real requiere analizar cómo responde ante una partición. La aplicación de CAP al prototipo y sus límites se desarrollará junto con los resultados de la práctica.
