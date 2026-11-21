@@ -163,3 +163,12 @@
 - **Problema encontrado:** Al integrar las pruebas de concurrencia, tuve que revisar cómo presentar sus resultados sin mezclarlos con los del benchmark, ya que se realizaron en entornos diferentes. También detecté que había colocado mi conclusión individual dentro del archivo de conclusiones generales, por lo que fue necesario corregir su ubicación.
 - **Solución y comprobación:** Organicé la información para distinguir las mediciones secuenciales de las pruebas concurrentes y revisé que las cifras coincidieran con los registros del proyecto. Moví mi conclusión al archivo `conclusiones/mario.tex` y mantuve las conclusiones generales en `14_conclusiones.tex`.
 - **Tiempo dedicado:** 2 horas y 12 minutos.
+
+### 2026-11-21 · Mario Zambrano
+
+- **Integrantes presentes:** Mario Zambrano.
+- **Commit(s):** `7d88d7f` — Corrijo la integridad de los CSV del benchmark entre sistemas operativos.
+- **Qué se hizo:** Corregí un problema de compatibilidad en los cuatro archivos CSV originales del benchmark de TCP y gRPC. Incorporé el archivo `.gitattributes` para que Git conserve los saltos de línea CRLF con los que se generaron los registros en Windows. Después, preparé nuevamente los cuatro CSV para que mantuvieran su formato original al publicarlos en el repositorio.
+- **Problema encontrado:** Al verificar los archivos desde Linux, los hashes SHA-256 no coincidían con los registrados en `data/SHA256SUMS`. Esto ocurría porque Git convertía los saltos de línea CRLF de Windows a LF, lo que cambiaba los bytes de los archivos, aunque los datos de las mediciones permanecían iguales.
+- **Solución y comprobación:** Configuré `.gitattributes` para evitar la conversión automática de saltos de línea en los cuatro CSV. Utilicé `git add --renormalize` y `git ls-files --eol` para comprobar que los archivos se almacenaran con CRLF. Posteriormente, verifiqué sus hashes SHA-256 y obtuve resultados correctos (`OK`) en los cuatro casos. Finalmente, publiqué el commit y comprobé en GitHub que los archivos conservaran su formato original. No fue necesario modificar los valores registrados ni repetir las mediciones.
+- **Tiempo dedicado:** 38 minutos.
