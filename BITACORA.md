@@ -146,3 +146,11 @@
 - **Problema encontrado:** Ninguno.
 - **Solución y comprobación:** Todo bien.
 - **Tiempo dedicado:** 2 horas y 16 minutos.
+
+### 2026-11-20 · Joseph Calderón Saltos
+- **Integrantes presentes:** Joseph Calderón Saltos.
+- **Commit(s):** `7d0dbcd` — gregar fundamentos de sistemas distribuidos; `0b00a6c` — actualizar implementación TCP.
+- **Qué se hizo:** Completé la sección 02 con fundamentos de sistemas distribuidos, la comparación entre sistemas centralizados, paralelos y distribuidos, las transparencias ANSA y el alcance de CAP. También completé la sección 07 con la descripción de la prueba funcional de 20 intercambios TCP y su evidencia, distinguiéndola del benchmark.
+- **Problema encontrado:** Ninguno
+- **Solución y comprobación:** La sección TCP referencia la captura de los 20 intercambios y aclara que los resultados del benchmark están en los CSV indicados.
+- **Tiempo dedicado:** 30 minutos
