@@ -154,3 +154,12 @@
 - **Problema encontrado:** Ninguno
 - **Solución y comprobación:** La sección TCP referencia la captura de los 20 intercambios y aclara que los resultados del benchmark están en los CSV indicados.
 - **Tiempo dedicado:** 30 minutos
+
+  ### 2026-11-21 · Mario Zambrano
+
+- **Integrantes presentes:** Mario Zambrano.
+- **Commit(s):** `b629eb2` — Completo la documentación experimental, el análisis y las conclusiones.
+- **Qué se hizo:** Actualicé las secciones 10 y 11 del informe para incorporar los resultados de las pruebas de concurrencia realizadas con tres nodos, diferenciándolas de las mediciones de latencia y rendimiento que obtuve anteriormente. También completé la discusión de los resultados, comparé las mediciones con la hipótesis inicial y expliqué cómo podrían aplicarse TCP y gRPC al proyecto SGRA. Redacté mi conclusión individual, colaboré con las conclusiones generales y respondí la pregunta del anexo sobre TCP, gRPC y el teorema CAP. Además, completé el resumen y el abstract y actualicé la portada con los nombres de los integrantes.
+- **Problema encontrado:** Al integrar las pruebas de concurrencia, tuve que revisar cómo presentar sus resultados sin mezclarlos con los del benchmark, ya que se realizaron en entornos diferentes. También detecté que había colocado mi conclusión individual dentro del archivo de conclusiones generales, por lo que fue necesario corregir su ubicación.
+- **Solución y comprobación:** Organicé la información para distinguir las mediciones secuenciales de las pruebas concurrentes y revisé que las cifras coincidieran con los registros del proyecto. Moví mi conclusión al archivo `conclusiones/mario.tex` y mantuve las conclusiones generales en `14_conclusiones.tex`.
+- **Tiempo dedicado:** 2 horas y 12 minutos.
