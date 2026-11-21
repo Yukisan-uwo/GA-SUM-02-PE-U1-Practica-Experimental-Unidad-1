@@ -172,3 +172,12 @@
 - **Problema encontrado:** Al verificar los archivos desde Linux, los hashes SHA-256 no coincidían con los registrados en `data/SHA256SUMS`. Esto ocurría porque Git convertía los saltos de línea CRLF de Windows a LF, lo que cambiaba los bytes de los archivos, aunque los datos de las mediciones permanecían iguales.
 - **Solución y comprobación:** Configuré `.gitattributes` para evitar la conversión automática de saltos de línea en los cuatro CSV. Utilicé `git add --renormalize` y `git ls-files --eol` para comprobar que los archivos se almacenaran con CRLF. Posteriormente, verifiqué sus hashes SHA-256 y obtuve resultados correctos (`OK`) en los cuatro casos. Finalmente, publiqué el commit y comprobé en GitHub que los archivos conservaran su formato original. No fue necesario modificar los valores registrados ni repetir las mediciones.
 - **Tiempo dedicado:** 38 minutos.
+
+### 2026-11-21 · Mario Zambrano
+
+- **Integrantes presentes:** Mario Zambrano.
+- **Commit(s):** `2088bb8` — Completo mis aportes, declaración de IA y corrijo el código de la actividad.
+- **Qué se hizo:** Completé mi fila en la tabla de aportes del informe LaTeX, donde describí las actividades que realicé durante la práctica e incorporé enlaces a diez commits significativos de GitHub. También agregué mi declaración individual sobre el uso de ChatGPT como herramienta de apoyo en el desarrollo del benchmark, la interpretación de los resultados y la revisión de la documentación. Además, corregí el código de la actividad de GA-SUM-01 a GA-SUM-02 en la portada y los encabezados del documento, de acuerdo con la información publicada en el SGA.
+- **Problema encontrado:** Al revisar los apartados finales del informe, observé que mi fila de aportes todavía no tenía enlaces a los commits realizados y que faltaba documentar mi utilización de herramientas de inteligencia artificial. También existía una diferencia entre el código de la actividad del informe y el registrado en el SGA.
+- **Solución y comprobación:** Revisé mi historial de GitHub para seleccionar diez commits representativos de las distintas etapas del trabajo y los incorporé como enlaces verificables en la tabla de aportes. Redacté mi declaración de IA y actualicé el código oficial de la actividad en el archivo `main.tex`.
+- **Tiempo dedicado:** 28 minutos.
