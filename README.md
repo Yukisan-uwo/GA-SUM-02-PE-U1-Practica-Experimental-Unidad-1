@@ -90,3 +90,19 @@ El informe continúa en borrador mientras haya apartados y resultados pendientes
 ## Video
 
 Pendiente: enlace al video del equipo con participación de todos los integrantes.
+
+## Corridas personales de veinte intercambios
+
+Las corridas seleccionadas de Roger, con TCP y gRPC, tienen 20 solicitudes y
+100 bytes de carga por solicitud. Reporte de fechas, CSV, roles y hashes:
+[docs/tablas/lamport20/resumen.md](docs/tablas/lamport20/resumen.md).
+Capturas y procedencia: [docs/EVIDENCIAS_20_INTERCAMBIOS.md](docs/EVIDENCIAS_20_INTERCAMBIOS.md).
+
+Para regenerar el reporte desde los CSV sin sobrescribir el ya entregado:
+
+```bash
+python analysis/report_twenty_exchanges.py --grpc-capture data/lamport20/grpc-20261121-002802 --tcp-capture data/lamport20/tcp-20261121-003058 --output analysis/lamport20_recalculado
+```
+
+Si la carpeta de salida existe, elegir otra. Estas corridas no sustituyen ni se
+agregan a las 2000 mediciones RTT ni a las capturas de carga de 300 solicitudes.

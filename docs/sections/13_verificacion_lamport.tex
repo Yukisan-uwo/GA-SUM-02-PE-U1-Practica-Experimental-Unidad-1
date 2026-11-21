@@ -68,6 +68,43 @@ menor. Sin embargo, marcas distintas tampoco bastan para inferir causalidad.
 Un vector lógico puede expresar la información causal que el escalar pierde,
 a costa de mantener una componente por nodo \cite{vanSteenTanenbaum2023}.
 
+\subsection{Corridas de veinte intercambios ejecutadas por Roger}
+Además de las capturas de carga concurrente, se verificaron dos corridas
+funcionales de veinte intercambios totales, una TCP y otra gRPC, con 100 bytes
+por solicitud y tres nodos. Roger ejecutó el lanzador desde su terminal y
+conservó capturas de comandos, usuario, máquina, hora, procesos y resultados
+de integridad. Los archivos están en \path{data/lamport20/} y las evidencias en
+\path{docs/evidencias/Roger/lamport20/}; no se modificaron los CSV ni las imágenes.
+
+Cada proceso actúa como servidor y cliente: A envía siete solicitudes a B,
+B envía siete a C y C envía seis a A. No son veinte solicitudes por nodo ni
+veinte intercambios únicamente entre A y B. El registro de entorno conserva el
+inicio en UTC; el reporte derivado también lo expresa en UTC$-05{:}00$.
+
+El script \path{analysis/report_twenty_exchanges.py} recalcula integridad y
+causalidad antes de generar conteos y ejemplos. También contrasta el reloj
+final y la cantidad enviada de cada nodo con sus CSV. Las filas siguientes
+proceden de ese script, no de una transcripción manual:
+
+\begin{table}[htbp]
+\centering
+\small
+\IfFileExists{tablas/lamport20/lamport20_resumen.tex}{%
+  \input{tablas/lamport20/lamport20_resumen.tex}%
+}{\pendiente{Regenerar el reporte de las corridas seleccionadas de veinte intercambios.}}
+\caption{Verificación de las corridas funcionales de veinte intercambios.}
+\label{tab:lamport20-verificacion}
+\end{table}
+
+\IfFileExists{tablas/lamport20/lamport20_ejemplos.tex}{%
+  \input{tablas/lamport20/lamport20_ejemplos.tex}%
+}{\pendiente{Extraer los ejemplos desde los CSV seleccionados.}}
+
+Los nombres exactos de archivos, fecha de corrida, roles, tamaño y comprobación
+de hashes se detallan en \path{docs/tablas/lamport20/resumen.md}. Las capturas
+acreditan estas ejecuciones funcionales, no la ejecución manual de la prueba
+de trescientas solicitudes ni el desempeño en la demostración.
+
 \subsection{Límites y evidencias pendientes}
 El éxito de estas capturas acredita consistencia del reloj sobre los eventos
 registrados y entrega de los acuses bajo esa carga, no ausencia de todos los
@@ -75,7 +112,7 @@ fallos posibles. Solo hay una captura por condición de concurrencia y el arranq
 está sincronizado; no se extraen conclusiones estadísticas de rendimiento ni
 se mezclan las máquinas Linux y Windows en una comparación de latencias.
 
-\pendiente{Adjuntar capturas personales de Roger que muestren comandos, usuario,
-equipo y fecha/hora, y documentar por separado la prueba de caída de nodo.
-No presentar una captura de los tests o una ejecución automatizada como
-participación humana acreditada.}
+\pendiente{Documentar por separado la prueba de caída de nodo y la evidencia
+personal de carga de trescientas solicitudes. Las capturas personales de veinte
+intercambios ya están identificadas; no presentar tests o ejecuciones asistidas
+de otra condición como participación humana acreditada.}

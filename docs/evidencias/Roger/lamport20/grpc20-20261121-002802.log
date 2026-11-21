@@ -1,0 +1,30 @@
+nodo-B | PID=43888 | roger@omarchy | 2026-11-21T05:28:09.333669+00:00 | puerto=5001
+nodo-A | PID=43887 | roger@omarchy | 2026-11-21T05:28:09.334006+00:00 | puerto=5000
+nodo-C | PID=43889 | roger@omarchy | 2026-11-21T05:28:09.334101+00:00 | puerto=5002
+{
+  "valido": true,
+  "archivos": 3,
+  "eventos": 80,
+  "pares_evaluados": 40,
+  "errores": [],
+  "ejemplo_relojes_iguales": {
+    "mecanismo": "gRPC",
+    "corrida": "grpc20-20261121-002802",
+    "reloj": 1,
+    "eventos": [
+      {
+        "nodo": "nodo-A",
+        "secuencia": 1,
+        "evento": "envio_solicitud",
+        "id_mensaje": "grpc20-20261121-002802:nodo-A-000001"
+      },
+      {
+        "nodo": "nodo-B",
+        "secuencia": 1,
+        "evento": "envio_solicitud",
+        "id_mensaje": "grpc20-20261121-002802:nodo-B-000001"
+      }
+    ]
+  }
+}
+Datos de ejecución: /home/roger/UNIVERSIDAD/UNI SEM7/SISTEMAS DISTRIBUIDOS/GA-SUM - PE-U1/trabajo_repo/data/lamport20/grpc-20261121-002802

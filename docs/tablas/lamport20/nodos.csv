@@ -1,0 +1,7 @@
+mecanismo,nodo,pid,puerto,solicitudes_enviadas,destino_cliente,solicitudes_recibidas,origen_servidor,reloj_final
+gRPC,nodo-A,43887,5000,7,nodo-B,6,nodo-C,28
+gRPC,nodo-B,43888,5001,7,nodo-C,7,nodo-A,28
+gRPC,nodo-C,43889,5002,6,nodo-A,7,nodo-B,27
+TCP,nodo-A,45755,5000,7,nodo-B,6,nodo-C,28
+TCP,nodo-B,45756,5001,7,nodo-C,7,nodo-A,28
+TCP,nodo-C,45757,5002,6,nodo-A,7,nodo-B,27
