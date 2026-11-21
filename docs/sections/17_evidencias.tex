@@ -1,11 +1,103 @@
 \subsection{Capturas y bitácora}
-\pendiente{Incluir al menos 6 capturas auténticas: tres nodos, intercambio TCP, intercambio gRPC y ejecución del análisis, con fecha/hora y datos de equipo; guardar en docs/capturas/. Referenciar BITACORA.md.}
+
+Las capturas están en \texttt{docs/evidencias/}, en una carpeta por integrante. Cada una se tomó en el equipo de quien aparece como autor y muestra datos propios de esa máquina: usuario o nombre del equipo, y fecha y hora del sistema. La tabla~\ref{tab:capturas} resume las que cubren los requisitos de la guía.
+
+\par\medskip
+\noindent\begin{minipage}{\linewidth}
+\centering
+\small
+\makeatletter\def\@captype{table}\makeatother
+\caption{Capturas de ejecución por integrante}
+\label{tab:capturas}
+\begin{tabularx}{\linewidth}{@{}l >{\raggedright\arraybackslash}p{5.4cm} >{\raggedright\arraybackslash}X@{}}
+\toprule
+Integrante & Archivo en \texttt{docs/evidencias/} & Qué muestra \\
+\midrule
+Joseph & \nolinkurl{Joseph/tcp_20_intercambios_2026-11-18.png} & Intercambio con sockets TCP: 20 solicitudes de \texttt{nodo-A} a \texttt{nodo-B}. \\
+Mera & \nolinkurl{Mera/grpc_20_intercambios_2026-11-19.png} & Intercambio con gRPC: 20 solicitudes de \texttt{nodo-A} a \texttt{nodo-B}. \\
+Mera & \nolinkurl{Mera/grpc_nodo_caido_2026-11-19.png} & Envío a \texttt{nodo-C} apagado mientras \texttt{nodo-B} sigue respondiendo. \\
+Roger & \nolinkurl{Roger/lamport20/tcp20_arranque.png}, \nolinkurl{grpc20_arranque.png} & Los tres nodos en marcha en las corridas oficiales de 20 intercambios. \\
+Roger & \nolinkurl{Roger/lamport20/tcp20_verificacion.png}, \nolinkurl{tcp20_hashes.png}, \nolinkurl{grpc20_hashes.png} & Verificación de Lamport y hashes de esas corridas. \\
+Roger & \nolinkurl{Roger/controlados/control_01} a \nolinkurl{control_04} & Pruebas controladas de caída de nodos, análisis y hashes. \\
+Mario & \nolinkurl{Mario/01_plan_experimental.png} a \nolinkurl{08_benchmark_grpc.png} & Plan experimental, configuración, validación de repeticiones, entorno, integración de los clientes y ejecución del benchmark. \\
+Mario & \nolinkurl{Mario/09_analisis_estadistico.png} & Ejecución del script de análisis. \\
+\bottomrule
+\end{tabularx}
+\end{minipage}
+\par\medskip
+
+Las carpetas \texttt{Roger/lamport20/} y \texttt{Roger/controlados/} incluyen además los registros de consola (\texttt{.log}) de esas sesiones y su propio \texttt{SHA256SUMS}. Las sesiones de trabajo de cada integrante, con fecha, tareas, problemas y soluciones, están en \texttt{BITACORA.md}, en la raíz del repositorio.
 
 \subsection{CSV originales y SHA-256}
-\pendiente{Especificar listado de todos los CSV crudos, archivos de verificación SHA256SUMS y comandos para comprobarlos.}
+
+Todos los CSV generados en las corridas se conservan sin editar en \texttt{data/}. Cada conjunto tiene un manifiesto \texttt{SHA256SUMS}, y los manifiestos de las carpetas incluyen a su vez los de sus subcarpetas (tabla~\ref{tab:datos-crudos}).
+
+\par\medskip
+\noindent\begin{minipage}{\linewidth}
+\centering
+\small
+\makeatletter\def\@captype{table}\makeatother
+\caption{Datos crudos y manifiestos de integridad}
+\label{tab:datos-crudos}
+\begin{tabularx}{\linewidth}{@{}>{\raggedright\arraybackslash}p{3.4cm} >{\raggedright\arraybackslash}X@{}}
+\toprule
+Carpeta & Contenido \\
+\midrule
+\nolinkurl{data/} & Benchmark de RTT: \nolinkurl{latency_sockets.csv}, \nolinkurl{latency_grpc.csv}, \nolinkurl{runs_sockets.csv} y \nolinkurl{runs_grpc.csv} (2000 mediciones). \\
+\nolinkurl{data/lamport20/} & Corridas oficiales de 20 intercambios con tres nodos: \nolinkurl{tcp-20261121-003058/} y \nolinkurl{grpc-20261121-002802/}. \\
+\nolinkurl{data/concurrencia/} & Cuatro corridas de 300 solicitudes concurrentes (TCP y gRPC, 100\,B y 10\,KiB) y sus registros de consola. \\
+\nolinkurl{data/controlados/} & Pruebas de caída y de propagación con 2, 3 y 5 nodos: sesión personal \nolinkurl{personal-20261121-152127/} y sesión asistida \nolinkurl{r01/}. \\
+\bottomrule
+\end{tabularx}
+\end{minipage}
+\par\medskip
+
+Los manifiestos se verifican desde la carpeta correspondiente. En Linux y macOS, o en Windows desde Git Bash:
+
+\begin{lstlisting}[language=bash,caption={Verificación de la integridad de los datos}]
+cd data && sha256sum -c SHA256SUMS
+cd lamport20 && sha256sum -c SHA256SUMS
+\end{lstlisting}
+
+Para revisar todos los manifiestos del repositorio de una sola vez:
+
+\begin{lstlisting}[language=bash]
+for f in $(find data docs/evidencias -name SHA256SUMS); do
+  (cd "$(dirname "$f")" && sha256sum -c SHA256SUMS --quiet) || echo "FALLA: $f"
+done
+\end{lstlisting}
+
+Los hashes de los cuatro CSV del benchmark se calcularon en Windows, con fin de línea CRLF. Para que coincidan en cualquier sistema operativo, el archivo \texttt{.gitattributes} indica a Git que conserve esos archivos sin convertir sus saltos de línea. El 21 de noviembre de 2026 se comprobaron, en un clon limpio del repositorio en Linux, los 77 manifiestos \texttt{SHA256SUMS} de \texttt{data/} y \texttt{docs/evidencias/}, sin ninguna falla.
 
 \subsection{Historial Git y reproducción del trabajo}
-\pendiente{Referenciar commits significativos de cada autor; documentar comandos para ejecutar nodos, experimentos, análisis y compilación en README.md.}
+
+Los commits significativos de cada integrante se enlazan en la tabla de aportes (tabla~\ref{tab:aportes}). El historial completo de un autor se puede consultar con:
+
+\begin{lstlisting}[language=bash]
+git log --author="Mera" --format="%h %ad %s" --date=short
+\end{lstlisting}
+
+Los comandos para reproducir el trabajo están en \texttt{README.md}. En resumen, desde la raíz del repositorio y con el entorno virtual activo:
+
+\begin{lstlisting}[language=bash,caption={Reproducción de las pruebas, el análisis y el informe}]
+python -m pip install -r requirements.txt
+python analysis/run_lamport_experiment.py --mechanism grpc --run-id grpc-r99 --output data/lamport_grpc_r99
+python analysis/analisis_resultados.py
+python -B -m unittest discover -s tests
+cd docs && pdflatex main.tex && biber main && pdflatex main.tex && pdflatex main.tex
+\end{lstlisting}
+
+El lanzador de tres nodos no sobrescribe carpetas existentes, por lo que cada repetición debe usar un \texttt{--run-id} y un \texttt{--output} nuevos. El script de análisis lee los CSV de \texttt{data/} sin modificarlos y regenera las tablas y figuras del informe.
 
 \subsection{Demostración en vivo y video de respaldo}
-\pendiente{Añadir URL del video de 3--5 minutos con rostro/voz de los cuatro integrantes; debe estar enlazado en README.md. Preparar cambio de tamaño de mensaje en vivo.}
+
+Para la demostración en clase, cualquier integrante puede ejecutar un intercambio y cambiar el tamaño del mensaje en el momento. Con gRPC, por ejemplo, se levanta el servidor en una terminal y en otra se envían 100 mensajes de 10\,KiB:
+
+\begin{lstlisting}[language=bash,caption={Cambio del tamaño del mensaje durante la demostración}]
+python src/grpc/server_grpc.py nodo-B --silencioso
+python src/grpc/client_grpc.py --sender nodo-A --receiver nodo-B --size-bytes 10240 --count 100 --run 99
+\end{lstlisting}
+
+En TCP el procedimiento es el mismo con \texttt{src/sockets/server.py --node nodo-B --port 5001} y \texttt{src/sockets/client.py}, que acepta las mismas opciones \texttt{--size-bytes}, \texttt{--count} y \texttt{--run}. Los clientes escriben sus registros en \texttt{data/}; esos archivos de demostración no forman parte de los datos entregados y no se suben al repositorio.
+
+\pendiente{Añadir la URL del video de 3 a 5 minutos, con rostro y voz de los cuatro integrantes, y enlazarlo también en README.md.}
