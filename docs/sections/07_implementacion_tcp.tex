@@ -20,4 +20,23 @@ response = receive_json_line(self.reader)
 \end{lstlisting}
 
 \subsubsection{Ejecución de 20 intercambios y registro de eventos}
-\pendiente{Agregar el CSV generado por la corrida y describir los 20 intercambios con sus datos observados.}
+La prueba funcional documentada envía 20 solicitudes desde
+\texttt{nodo-A} hacia \texttt{nodo-B}, a través de
+\texttt{127.0.0.1:5001}. El cliente reutiliza la conexión TCP para los
+intercambios. La evidencia de esta ejecución se conserva en la
+Figura~\ref{fig:tcp-20-intercambios}.
+
+\begin{figure}[H]
+    \centering
+    \includegraphics[width=0.95\linewidth]
+    {evidencias/Joseph/tcp_20_intercambios_2026-11-18.png}
+    \caption{Ejecución funcional de 20 intercambios mediante TCP.}
+    \label{fig:tcp-20-intercambios}
+\end{figure}
+
+Esta comprobación funcional es distinta del benchmark de rendimiento.
+Los registros de las mediciones están en
+\texttt{data/latency\_sockets.csv}, y el resumen de cada corrida, en
+\texttt{data/runs\_sockets.csv}. El benchmark incluye cinco corridas de
+100 mensajes con cargas de 100 y 10\,240 bytes; todos los registros
+TCP aparecen con \texttt{ok=true}.
