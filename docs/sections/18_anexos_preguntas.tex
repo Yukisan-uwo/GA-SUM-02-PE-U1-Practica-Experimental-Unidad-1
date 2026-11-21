@@ -1,6 +1,10 @@
 % Cuatro preguntas OBLIGATORIAS (Anexos, página 4 de la guía).
+
 \subsection{Efecto del número de nodos sobre la propagación de relojes}
-\pendiente{¿Cómo afecta el número de nodos al tiempo de convergencia de los relojes Lamport? Aclarar qué se entiende por propagación/convergencia y sustentar con datos medidos, no con una sincronización física inexistente.}
+
+Los relojes de Lamport no convergen a un mismo valor ni miden el tiempo físico. Cada nodo incrementa su contador ante eventos locales y envíos; al recibir un mensaje, actualiza su valor con la regla $L=\max(L_{\mathrm{local}},L_{\mathrm{recibido}})+1$. Por eso, aumentar el número de nodos no cambia la regla del reloj. Puede añadir más eventos y saltos de comunicación antes de que una marca influya en otro nodo, pero el efecto depende de la topología, la carga y los mensajes intercambiados; no solo de la cantidad de nodos.
+
+En las corridas funcionales del equipo se mantuvieron tres nodos en anillo. En TCP y gRPC, las veinte solicitudes completaron sus acuses sin errores causales; los relojes finales fueron 28 para nodo-A, 28 para nodo-B y 27 para nodo-C. En las pruebas concurrentes del equipo se procesaron 300 solicitudes totales por condición, distribuidas entre los tres nodos, y el verificador no encontró errores causales. No se compararon diferentes cantidades de nodos ni se midió un tiempo de convergencia. Por tanto, estos resultados respaldan el orden causal para las configuraciones probadas, pero no permiten cuantificar cómo cambiaría el tiempo al agregar nodos.
 
 \subsection{Selección de sockets TCP o gRPC en el PFC y relación con CAP}
 
@@ -29,5 +33,15 @@ El reloj de Lamport no detecta fallos. Cada nodo solo cambia su reloj cuando ocu
 El 19 de noviembre de 2026 se probó este caso con gRPC (figura~\ref{fig:grpc-nodo-caido}). Con \texttt{nodo-B} en marcha y \texttt{nodo-C} apagado, un envío de \texttt{nodo-A} a \texttt{nodo-C} terminó con el aviso «No se pudo conectar con nodo-C en 127.0.0.1:5002». Como el fallo ocurrió al abrir el canal, antes de la llamada \texttt{enviar}, el reloj de \texttt{nodo-A} no llegó a incrementarse y no quedó ningún evento de envío sin su recepción. En la misma sesión, \texttt{nodo-B} siguió respondiendo: su reloj iba en 79 tras los 20 intercambios anteriores, y un nuevo proceso cliente de \texttt{nodo-A}, que arrancó con su reloj en 0, le envió un mensaje con el valor 1. \texttt{nodo-B} registró la recepción con $\max(79, 1) + 1 = 80$, respondió con 81, y el cliente quedó en 82 al recibir el acuse. Este comportamiento muestra lo que pasaría al reincorporarse un nodo reiniciado: aunque vuelva con el reloj en 0, el primer mensaje que reciba de un nodo más avanzado lo adelanta, y los eventos posteriores conservan el orden causal.
 
 La prueba cubrió un nodo que ya estaba apagado antes de la comunicación; no se provocó una caída a mitad de un intercambio. En ese caso, el código está preparado para registrar el envío con \texttt{ok = false} y el tipo de error (\texttt{timeout} o \texttt{conexion\_rechazada}). El evento de envío ya habría quedado en el CSV del emisor, con su reloj incrementado, pero no existiría el evento de recepción correspondiente en el receptor. Por esa razón, en la verificación de Lamport solo se pueden comparar envío y recepción en los mensajes que tienen ambos eventos registrados. Por último, un límite de espera no permite distinguir un nodo caído de uno que responde con lentitud: si \texttt{nodo-B} tardara más de dos segundos, el cliente lo trataría igual que si estuviera caído.
+
 \subsection{Transparencias ANSA logradas o faltantes}
-\pendiente{¿Cuáles se logran realmente? ¿Cómo implementar las faltantes? Verificar contra código y arquitectura, no atribuir propiedades inexistentes.}
+
+El prototipo ofrece algunas transparencias de forma parcial y otras no están implementadas. En acceso, la interfaz común permite enviar mensajes mediante TCP o gRPC, pero el mecanismo y el destino deben seleccionarse explícitamente. La transparencia de ubicación no se ofrece: los nodos se identifican con nombres, direcciones y puertos, como \texttt{127.0.0.1:5001}.
+
+No se implementan transparencias de migración ni de reubicación, porque el sistema no traslada procesos o servicios durante una operación. Tampoco hay transparencia de replicación: los tres procesos no mantienen copias sincronizadas de un mismo conjunto de datos. Cada uno conserva su propio reloj y sus registros locales.
+
+La transparencia de concurrencia se ofrece parcialmente. El servidor puede atender conexiones en hilos separados y las pruebas concurrentes del equipo procesaron 300 solicitudes totales por condición entre los tres nodos, sin errores causales reportados. Sin embargo, la concurrencia se configura y ejecuta explícitamente; el prototipo no oculta todos sus efectos sobre un estado de aplicación compartido.
+
+La transparencia de fallos tampoco se ofrece por completo. El cliente puede detectar y registrar un error o un tiempo de espera, pero el sistema no oculta la interrupción mediante una réplica ni realiza una recuperación automática. Finalmente, no hay transparencia de persistencia: los eventos y las latencias se guardan en archivos CSV locales, mientras que los relojes se mantienen en memoria y se reinician al iniciar un proceso nuevo.
+
+Estas conclusiones se limitan a las funciones implementadas y a las pruebas disponibles. La ejecución con tres nodos no demuestra migración, reubicación ni replicación; las pruebas concurrentes verifican el intercambio de mensajes y la causalidad bajo las condiciones descritas, no una transparencia general para cualquier carga.
