@@ -26,10 +26,13 @@ PUERTOS = {"nodo-A": 5000, "nodo-B": 5001, "nodo-C": 5002}
 
 
 class MessagingServicer(messaging_pb2_grpc.MessagingServiceServicer):
-    def __init__(self, nombre, reloj, silencioso=False):
+    def __init__(self, nombre, reloj, silencioso=False, *, event_log=None):
         self.nombre = nombre
         self.reloj = reloj
         self.silencioso = silencioso
+        self.event_log = event_log
+        if event_log is not None and event_log.clock is not reloj:
+            raise ValueError("Servidor y registro deben compartir la misma instancia de reloj")
         # Numero de mensaje por conexion y emisor, igual que en TCP,
         # para que el id_mensaje coincida con el del cliente.
         self.contadores = {}
@@ -43,20 +46,31 @@ class MessagingServicer(messaging_pb2_grpc.MessagingServiceServicer):
 
     def EnviarMensaje(self, request, context):
         try:
-            ts_recepcion = self.reloj.receive(request.timestamp)
+            if self.event_log is not None:
+                metadata = dict(context.invocation_metadata())
+                id_mensaje = metadata.get("x-message-id")
+                if metadata.get("x-run-id") != self.event_log.run:
+                    raise ValueError("La corrida no corresponde al servidor")
+                ts_recepcion = self.event_log.record(
+                    "recepcion_solicitud", id_mensaje, request.sender, self.nombre,
+                    remote=request.timestamp)
+            else:
+                ts_recepcion = self.reloj.receive(request.timestamp)
         except (TypeError, ValueError) as error:
             context.abort(grpc.StatusCode.INVALID_ARGUMENT, str(error))
 
-        id_mensaje = self._siguiente_id(context.peer(), request.sender)
-        if not self.silencioso:
+        if self.event_log is None:
+            id_mensaje = self._siguiente_id(context.peer(), request.sender)
+        if not self.silencioso and self.event_log is None:
             registrar_evento(self.nombre, "recepcion_solicitud", ts_recepcion,
                              id_mensaje, request.sender, self.nombre)
             print(f"RECEPCION {request.sender} -> {self.nombre}: reloj={ts_recepcion}, "
                   f"bytes={len(request.message.encode('utf-8'))}")
 
         # Enviar el acuse es un evento nuevo, por eso se incrementa el reloj.
-        ts_acuse = self.reloj.tick()
-        if not self.silencioso:
+        ts_acuse = (self.event_log.record("envio_acuse", id_mensaje, self.nombre, request.sender)
+                    if self.event_log is not None else self.reloj.tick())
+        if not self.silencioso and self.event_log is None:
             registrar_evento(self.nombre, "envio_acuse", ts_acuse,
                              id_mensaje, self.nombre, request.sender)
             print(f"ENVIO_ACUSE {self.nombre} -> {request.sender}: reloj={ts_acuse}")

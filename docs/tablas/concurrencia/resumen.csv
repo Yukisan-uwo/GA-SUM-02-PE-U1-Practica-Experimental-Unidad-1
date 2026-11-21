@@ -1,0 +1,5 @@
+corrida,mecanismo,carga_bytes,solicitudes,acuses,eventos,pares,errores_causales,procesos,fuente
+tcp-c100-r01,TCP,100,300,300,1200,600,0,3,data/concurrencia/tcp-c100-r01
+tcp-c10240-r01,TCP,10240,300,300,1200,600,0,3,data/concurrencia/tcp-c10240-r01
+grpc-c100-r01,gRPC,100,300,300,1200,600,0,3,data/concurrencia/grpc-c100-r01
+grpc-c10240-r01,gRPC,10240,300,300,1200,600,0,3,data/concurrencia/grpc-c10240-r01

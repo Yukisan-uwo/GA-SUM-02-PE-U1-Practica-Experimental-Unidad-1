@@ -55,12 +55,17 @@ def receive_json_line(reader: Any) -> dict[str, Any]:
 class ClienteTCP:
     """Transport adapter with the common connect/send/close interface."""
 
-    def __init__(self, timeout: float = 2.0) -> None:
+    def __init__(self, timeout: float = 2.0, *, clock=None, event_log=None,
+                 first_send_barrier=None) -> None:
         self.timeout = timeout
         self.connection: socket.socket | None = None
         self.reader: Any = None
         self.writer: Any = None
-        self.clock = LamportClock()
+        self.clock = clock if clock is not None else LamportClock()
+        self.event_log = event_log
+        if event_log is not None and event_log.clock is not self.clock:
+            raise ValueError("Cliente y registro deben compartir la misma instancia de reloj")
+        self.first_send_barrier = first_send_barrier
 
     def conectar(self, host: str, puerto: int) -> None:
         if self.connection is not None:
@@ -81,9 +86,20 @@ class ClienteTCP:
         if self.connection is None or self.reader is None or self.writer is None:
             raise RuntimeError("Primero debes llamar a conectar()")
 
-        request = {"sender": sender, "timestamp": self.clock.tick(), "message": message}
         message_id = f"{sender}-{attempt:06d}"
-        append_event(sender, "envio_solicitud", request["timestamp"], message_id, sender, destination)
+        if self.event_log is not None:
+            message_id = f"{self.event_log.run}:{message_id}"
+            sent_clock = self.event_log.record(
+                "envio_solicitud", message_id, sender, destination)
+        else:
+            sent_clock = self.clock.tick()
+            append_event(sender, "envio_solicitud", sent_clock, message_id, sender, destination)
+        request = {"sender": sender, "timestamp": sent_clock, "message": message}
+        if self.event_log is not None:
+            request.update(id_mensaje=message_id, corrida=self.event_log.run)
+        if self.first_send_barrier is not None:
+            self.first_send_barrier.wait()
+            self.first_send_barrier = None
         started = time.perf_counter()
         try:
             self.writer.write(json.dumps(request, ensure_ascii=False, separators=(",", ":")) + "\n")
@@ -91,14 +107,10 @@ class ClienteTCP:
             response = receive_json_line(self.reader)
         except (socket.timeout, ConnectionError, OSError, json.JSONDecodeError) as error:
             elapsed_ms = (time.perf_counter() - started) * 1000
-            append_latency(
-                len(message.encode("utf-8")),
-                run_number,
-                attempt,
-                elapsed_ms,
-                False,
-                clasificar_error(error),
-            )
+            if self.event_log is None:
+                append_latency(
+                    len(message.encode("utf-8")), run_number, attempt, elapsed_ms,
+                    False, clasificar_error(error))
             raise
         elapsed_ms = (time.perf_counter() - started) * 1000
 
@@ -112,9 +124,17 @@ class ClienteTCP:
             or not isinstance(ok, bool)
         ):
             raise ValueError("El acuse requiere receiver, timestamp entero y ok booleano")
-        received_clock = self.clock.receive(remote_clock)
-        append_event(sender, "recepcion_acuse", received_clock, message_id, receiver, sender)
-        append_latency(len(message.encode("utf-8")), run_number, attempt, elapsed_ms, ok)
+        if receiver != destination or not ok:
+            raise ValueError("El acuse no confirma el destino solicitado")
+        if self.event_log is not None:
+            if response.get("id_mensaje") != message_id:
+                raise ValueError("El acuse no corresponde al identificador enviado")
+            self.event_log.record("recepcion_acuse", message_id, receiver, sender,
+                                  remote=remote_clock)
+        else:
+            received_clock = self.clock.receive(remote_clock)
+            append_event(sender, "recepcion_acuse", received_clock, message_id, receiver, sender)
+            append_latency(len(message.encode("utf-8")), run_number, attempt, elapsed_ms, ok)
         return response, elapsed_ms
 
     def cerrar(self) -> None:

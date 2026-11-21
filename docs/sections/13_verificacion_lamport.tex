@@ -1,12 +1,81 @@
-% Autoría principal: Roger. PRUEBAS SOBRE EVENTOS REALES, SIN SIMULACIONES.
-\subsection{Verificación automática de causalidad}
-\pendiente{Especificar y ejecutar el validador sobre los CSV reales: para cada recepción $L_{\mathrm{rec}}>L_{\mathrm{env}}$ del mensaje correspondiente. Mostrar resumen verificable del script.}
+% Preparado con asistencia de IA; los resultados se regeneran desde CSV reales.
+\subsection{Procedencia y alcance de las capturas}
+Las capturas de concurrencia se almacenan por separado en
+\path{data/concurrencia/}. Corresponden a ejecuciones automatizadas asistidas
+en el entorno Linux identificado en cada \texttt{environment.json}, no al
+equipo Windows de las dos mil mediciones secuenciales del benchmark.
+La procedencia y los comandos realmente ejecutados se conservan en ese directorio.
+Esta evidencia de ejecución no acredita por sí sola capturas personales,
+participación en video ni explicación individual del código.
 
-\subsection{Ejemplo de eventos concurrentes con marcas iguales}
-\pendiente{Encontrar dos eventos reales concurrentes de nodos diferentes con igual valor lógico; evidenciar que no están unidos por una relación causal, usando IDs/rastros de eventos. No fabricar ni modificar los relojes.}
+La carga concurrente utiliza tres clientes con cien solicitudes cada uno, para
+un total de trescientas solicitudes por condición. Se prueban TCP y gRPC con
+100 y 10240 bytes de carga útil. Cada nodo contiene su servidor, cliente y reloj
+compartido entre sus hilos. El método de barreras descrito en la arquitectura
+controla el inicio; no se interpretan los timestamps como tiempo físico.
+Estas pruebas son adicionales al benchmark, no otras dos mil observaciones de RTT.
 
-\subsection{Alcances de la ordenación de Lamport}
-\pendiente{Explicar que un timestamp distinto no demuestra causalidad por sí mismo; comparar con relojes vectoriales.}
+\subsection{Validación automática de integridad y causalidad}
+El programa \path{analysis/verify_lamport.py} agrupa por mecanismo, corrida e ID
+y exige un único envío y recepción de solicitud y de acuse. Comprueba extremos,
+secuencias locales sin huecos y la regla exacta del reloj en cada evento:
+\begin{equation}
+L_i^{\mathrm{nuevo}}=
+\begin{cases}
+L_i^{\mathrm{previo}}+1, & \text{si es envío},\\
+\max(L_i^{\mathrm{previo}},t_{\mathrm{remoto}})+1, & \text{si es recepción}.
+\end{cases}
+\end{equation}
+Además, el timestamp remoto registrado debe coincidir con el del envío
+emparejado y debe cumplirse $L_{\mathrm{recepci\acute{o}n}}>L_{\mathrm{env\acute{i}o}}$.
+El envío del acuse se comprueba como evento distinto, posterior a la recepción
+de solicitud. Un intercambio incompleto o duplicado no se cuenta como aprobado.
 
-\subsection{Pruebas de falla de nodo y tres clientes simultáneos}
-\pendiente{Adjuntar resultados propios sobre fallo/crash e intercambios concurrentes.}
+El script \path{analysis/summarize_concurrency.py} recalcula los hashes de
+\texttt{SHA256SUMS}, vuelve a ejecutar el verificador y contrasta el informe
+guardado con el resultado reproducido. También exige tres PID distintos y
+coherencia entre solicitudes, acuses y archivos de contexto. Solo entonces genera
+la tabla siguiente; sus valores no se introducen manualmente.
+
+\begin{table}[htbp]
+\centering
+\small
+\IfFileExists{tablas/concurrencia/concurrencia_resumen.tex}{%
+  \input{tablas/concurrencia/concurrencia_resumen.tex}%
+}{\pendiente{Generar el resumen de las capturas de concurrencia con el script.}}
+\caption{Conteos verificados sobre los registros crudos de concurrencia.
+Un par corresponde a un envío y su recepción, no a un RTT medido.}
+\label{tab:verificacion-concurrencia}
+\end{table}
+
+\subsection{Eventos concurrentes con marcas iguales}
+El script extrae de los CSV los nodos, secuencias e identificadores de eventos
+con igual marca dentro de la misma corrida y mecanismo:
+
+\IfFileExists{tablas/concurrencia/concurrencia_ejemplos.tex}{%
+  \input{tablas/concurrencia/concurrencia_ejemplos.tex}%
+}{\pendiente{Generar los ejemplos desde los registros reales, sin completar marcas a mano.}}
+
+El primer envío se registra antes de la segunda barrera, que impide transmitir
+hasta que los tres nodos hayan registrado el suyo. Por ello, en esa fase ninguno
+ha recibido información de otro. Las marcas iguales reflejan eventos
+causalmente independientes dentro de un arranque deliberadamente controlado;
+no prueban simultaneidad física exacta.
+
+La condición de Lamport permite concluir que estos eventos no están relacionados
+por precedencia causal: si uno precediera al otro, su marca sería estrictamente
+menor. Sin embargo, marcas distintas tampoco bastan para inferir causalidad.
+Un vector lógico puede expresar la información causal que el escalar pierde,
+a costa de mantener una componente por nodo \cite{vanSteenTanenbaum2023}.
+
+\subsection{Límites y evidencias pendientes}
+El éxito de estas capturas acredita consistencia del reloj sobre los eventos
+registrados y entrega de los acuses bajo esa carga, no ausencia de todos los
+fallos posibles. Solo hay una captura por condición de concurrencia y el arranque
+está sincronizado; no se extraen conclusiones estadísticas de rendimiento ni
+se mezclan las máquinas Linux y Windows en una comparación de latencias.
+
+\pendiente{Adjuntar capturas personales de Roger que muestren comandos, usuario,
+equipo y fecha/hora, y documentar por separado la prueba de caída de nodo.
+No presentar una captura de los tests o una ejecución automatizada como
+participación humana acreditada.}

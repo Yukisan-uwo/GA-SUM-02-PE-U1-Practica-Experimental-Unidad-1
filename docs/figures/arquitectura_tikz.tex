@@ -1,0 +1,15 @@
+\begingroup
+\shorthandoff{<>}
+\begin{tikzpicture}[
+  node distance=2cm and 3cm,
+  every node/.style={align=center},
+  box/.style={draw,rounded corners,text width=4cm,minimum height=1.6cm},
+  >=Stealth]
+\node[box] (a) {nodo-A:5000\\Servidor + cliente\\Reloj A + registro A};
+\node[box,right=of a] (b) {nodo-B:5001\\Servidor + cliente\\Reloj B + registro B};
+\node[box,below=of a,xshift=3.5cm] (c) {nodo-C:5002\\Servidor + cliente\\Reloj C + registro C};
+\draw[->,thick] (a) -- node[above] {solicitudes} (b);
+\draw[->,thick] (b) -- node[right] {solicitudes} (c);
+\draw[->,thick] (c) -- node[left] {solicitudes} (a);
+\end{tikzpicture}
+\endgroup

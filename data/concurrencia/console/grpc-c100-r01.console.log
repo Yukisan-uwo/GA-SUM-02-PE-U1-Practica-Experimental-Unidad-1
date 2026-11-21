@@ -1,0 +1,30 @@
+nodo-A | PID=14822 | roger@omarchy | 2026-11-21T04:40:11.220997+00:00 | puerto=5000
+nodo-B | PID=14823 | roger@omarchy | 2026-11-21T04:40:11.225454+00:00 | puerto=5001
+nodo-C | PID=14824 | roger@omarchy | 2026-11-21T04:40:11.231902+00:00 | puerto=5002
+{
+  "valido": true,
+  "archivos": 3,
+  "eventos": 1200,
+  "pares_evaluados": 600,
+  "errores": [],
+  "ejemplo_relojes_iguales": {
+    "mecanismo": "gRPC",
+    "corrida": "grpc-c100-r01",
+    "reloj": 1,
+    "eventos": [
+      {
+        "nodo": "nodo-A",
+        "secuencia": 1,
+        "evento": "envio_solicitud",
+        "id_mensaje": "grpc-c100-r01:nodo-A-000001"
+      },
+      {
+        "nodo": "nodo-B",
+        "secuencia": 1,
+        "evento": "envio_solicitud",
+        "id_mensaje": "grpc-c100-r01:nodo-B-000001"
+      }
+    ]
+  }
+}
+Datos de ejecución: /home/roger/UNIVERSIDAD/UNI SEM7/SISTEMAS DISTRIBUIDOS/GA-SUM - PE-U1/apoyo/resultados_concurrencia_mario/grpc-c100-r01

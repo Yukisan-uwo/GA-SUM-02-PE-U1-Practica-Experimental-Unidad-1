@@ -1,0 +1,26 @@
+{
+  "valido": true,
+  "archivos": 3,
+  "eventos": 1200,
+  "pares_evaluados": 600,
+  "errores": [],
+  "ejemplo_relojes_iguales": {
+    "mecanismo": "gRPC",
+    "corrida": "grpc-c10240-r01",
+    "reloj": 1,
+    "eventos": [
+      {
+        "nodo": "nodo-A",
+        "secuencia": 1,
+        "evento": "envio_solicitud",
+        "id_mensaje": "grpc-c10240-r01:nodo-A-000001"
+      },
+      {
+        "nodo": "nodo-B",
+        "secuencia": 1,
+        "evento": "envio_solicitud",
+        "id_mensaje": "grpc-c10240-r01:nodo-B-000001"
+      }
+    ]
+  }
+}

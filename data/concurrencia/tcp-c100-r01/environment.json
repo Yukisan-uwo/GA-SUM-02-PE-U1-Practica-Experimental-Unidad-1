@@ -1,0 +1,27 @@
+{
+  "utc": "2026-11-21T04:40:09.958642+00:00",
+  "user": "roger",
+  "hostname": "omarchy",
+  "os": "Linux-7.2.15-1-omarchy-x86_64-with-glibc2.44",
+  "processor": "Intel(R) Core(TM) i7-7700 CPU @ 3.60GHz",
+  "python": "3.14.8 (main, Oct  2 2026, 10:23:31) [GCC 16.2.1 20260810]",
+  "execution": "tres procesos localhost; hilos por servidor",
+  "configuration": {
+    "mechanism": "tcp",
+    "output": "/home/roger/UNIVERSIDAD/UNI SEM7/SISTEMAS DISTRIBUIDOS/GA-SUM - PE-U1/apoyo/resultados_concurrencia_mario/tcp-c100-r01",
+    "run_id": "tcp-c100-r01",
+    "messages": 300,
+    "size_bytes": 100,
+    "base_port": 5000,
+    "timeout": 5
+  },
+  "purpose": "prueba funcional concurrente; no benchmark de latencia",
+  "libraries": {
+    "grpcio": "1.85.1",
+    "grpcio-tools": null,
+    "protobuf": "7.36.2",
+    "pandas": null,
+    "matplotlib": null
+  },
+  "memory_bytes": 33521356800
+}

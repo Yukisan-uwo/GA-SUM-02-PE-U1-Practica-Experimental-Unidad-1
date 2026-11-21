@@ -1,16 +1,82 @@
-% Autoría principal: Roger; arquitectura revisada con todos.
-\subsection{Diseño de los tres nodos}
-\pendiente{Actualizar el diagrama de FORM-TL-01 con nodo-A, nodo-B, nodo-C y puertos 5000, 5001, 5002, indicando qué proceso actúa como servidor y cliente. No presentar una arquitectura propuesta como ejecutada.}
+% Desarrollo con asistencia de IA; revisar con el diseño original del equipo.
+\subsection{Tres nodos con estado independiente}
+La ejecución funcional crea tres procesos mediante \texttt{multiprocessing}
+con el método \texttt{spawn}. Cada proceso representa un nodo y aloja un
+servidor, un cliente, un reloj \texttt{LamportClock} y un registro
+\texttt{EventLog}. Servidor y cliente reciben las mismas instancias de reloj
+y registro dentro del proceso. Los otros nodos mantienen sus propios contadores.
 
-\subsection{Diagrama de arquitectura (TikZ)}
-% Crear figures/arquitectura_tikz.tex desde el diagrama real FORM-TL-01.
-\IfFileExists{figures/arquitectura_tikz.tex}{%
- \begin{figure}[htbp]\centering\input{figures/arquitectura_tikz.tex}
- \caption{Arquitectura validada de los tres nodos (diagrama del equipo).}\label{fig:arquitectura}\end{figure}
-}{\pendiente{Crear docs/figures/arquitectura\_tikz.tex con el diagrama real basado en FORM-TL-01.}}
+El coordinador inicia los tres procesos, sincroniza fases y reúne sus resultados;
+no es un cuarto nodo de mensajes ni mantiene un reloj lógico compartido.
+La comunicación de la prueba forma un anillo: A envía a B, B a C y C a A.
+Los acuses recorren la dirección inversa de cada solicitud.
 
-\subsection{Modelo de mensajes y flujo de comunicación}
-\pendiente{Mostrar estructura JSON {\ttfamily\{sender, timestamp, message\}}, su equivalente Protocol Buffers, direcciones de mensajes y correlación de solicitud/respuesta.}
+\begin{figure}[htbp]
+\centering
+\input{figures/arquitectura_tikz.tex}
+\caption{Arquitectura del lanzador funcional. Cada nodo comparte su reloj solo
+entre los hilos de su propio proceso; las flechas representan solicitudes.}
+\label{fig:arquitectura}
+\end{figure}
 
-\subsection{Ejecución y decisiones de despliegue}
-\pendiente{Explicar si se ejecutan procesos en localhost o contenedores Docker, y cómo se evitan conflictos de puertos cuando se comparan los dos mecanismos.}
+\pendiente{Contrastar este diagrama implementado con el diagrama original de
+FORM-TL-01 antes de cerrar el informe. No se ha supuesto que ambas versiones
+coincidan.}
+
+\subsection{Mensajes y correlación}
+TCP conserva \texttt{sender}, \texttt{timestamp} y \texttt{message} en JSON
+delimitado por líneas. En el modo integrado añade \texttt{id\_mensaje} y
+\texttt{corrida}; el acuse devuelve el ID recibido. El identificador combina
+la corrida, el nodo emisor y el número de solicitud.
+
+gRPC mantiene el contrato Protocol Buffers existente:
+\begin{lstlisting}
+syntax = "proto3";
+package messaging;
+service MessagingService {
+  rpc EnviarMensaje (Request) returns (Response);
+}
+message Request {
+  string sender = 1;
+  int64 timestamp = 2;
+  string message = 3;
+}
+message Response {
+  string receiver = 1;
+  int64 timestamp = 2;
+  bool ok = 3;
+}
+\end{lstlisting}
+
+Para no regenerar los stubs ni alterar las etiquetas del contrato, el modo
+integrado transmite ID y corrida mediante metadata gRPC
+\texttt{x-message-id} y \texttt{x-run-id}. El servidor utiliza esos valores
+en lugar de reconstruir IDs por orden de llegada. La llamada RPC relaciona
+su respuesta con la solicitud correspondiente.
+
+Los dos mecanismos transmiten la misma carga ASCII y la misma información
+lógica, pero no la misma cantidad de bytes en la red: JSON, Protobuf y metadata
+tienen costos distintos. El tamaño configurado describe la carga útil, no el
+mensaje completo serializado.
+
+\subsection{Despliegue y fases de ejecución}
+Los puertos predeterminados son 5000, 5001 y 5002 en localhost. TCP y gRPC se
+ejecutan por separado para no disputar esos puertos. El puerto base cero se
+reserva para pruebas automatizadas con puertos libres.
+
+Una primera barrera espera a que los tres servidores estén disponibles. Después
+cada cliente registra su primer envío y espera en una segunda barrera antes de
+transmitirlo. Así los primeros eventos de envío son causalmente independientes
+y pueden compartir marca 1 sin modificar datos ni forzar valores en el reloj.
+Esta coordinación es deliberada y no representa una llegada espontánea de tráfico.
+La última barrera impide cerrar un servidor mientras otro nodo espera un acuse.
+
+La configuración predeterminada distribuye veinte solicitudes como 7, 7 y 6.
+Para la prueba adicional de concurrencia se configura \texttt{--messages 300},
+que distribuye cien solicitudes por cliente sin cambiar la topología.
+Cada solicitud completada produce cuatro eventos: envío, recepción, envío de
+acuse y recepción de acuse. La captura esperada contiene ochenta eventos y
+cuarenta pares de envío y recepción. Estas cantidades describen el protocolo;
+la sección de verificación debe comprobarlas sobre los archivos de cada ejecución.
+La carga concurrente de trescientas solicitudes se analiza por separado en la
+sección de verificación y no modifica las dos mil mediciones RTT del benchmark.

@@ -34,12 +34,17 @@ def generar_mensaje(tamano_bytes):
 
 
 class ClienteGRPC:
-    def __init__(self, timeout=2.0, registrar_eventos=True):
+    def __init__(self, timeout=2.0, registrar_eventos=True, *, clock=None,
+                 event_log=None, first_send_barrier=None):
         self.timeout = timeout
         self.registrar_eventos = registrar_eventos
         self.canal = None
         self.stub = None
-        self.clock = LamportClock()
+        self.clock = clock if clock is not None else LamportClock()
+        self.event_log = event_log
+        if event_log is not None and event_log.clock is not self.clock:
+            raise ValueError("Cliente y registro deben compartir la misma instancia de reloj")
+        self.first_send_barrier = first_send_barrier
 
     def conectar(self, host, puerto):
         if self.canal is not None:
@@ -54,28 +59,46 @@ class ClienteGRPC:
         if self.stub is None:
             raise RuntimeError("Primero debes llamar a conectar()")
 
-        ts_envio = self.clock.send()
         id_mensaje = f"{sender}-{attempt:06d}"
         tamano = len(message.encode("utf-8"))
-        if self.registrar_eventos:
+        metadata = None
+        if self.event_log is not None:
+            id_mensaje = f"{self.event_log.run}:{id_mensaje}"
+            ts_envio = self.event_log.record(
+                "envio_solicitud", id_mensaje, sender, destination)
+            metadata = (("x-message-id", id_mensaje), ("x-run-id", self.event_log.run))
+        else:
+            ts_envio = self.clock.send()
+        if self.registrar_eventos and self.event_log is None:
             registrar_evento(sender, "envio_solicitud", ts_envio, id_mensaje, sender, destination)
         solicitud = messaging_pb2.Request(sender=sender, timestamp=ts_envio, message=message)
+        if self.first_send_barrier is not None:
+            self.first_send_barrier.wait()
+            self.first_send_barrier = None
 
         inicio = time.perf_counter()
         try:
-            acuse = self.stub.EnviarMensaje(solicitud, timeout=self.timeout)
+            acuse = self.stub.EnviarMensaje(solicitud, timeout=self.timeout, metadata=metadata)
         except grpc.RpcError as error:
             latencia_ms = (time.perf_counter() - inicio) * 1000
             tipo = ERRORES.get(error.code(), "otro")
-            registrar_latencia(tamano, run_number, attempt, latencia_ms, False, tipo)
+            if self.event_log is None:
+                registrar_latencia(tamano, run_number, attempt, latencia_ms, False, tipo)
             raise
         latencia_ms = (time.perf_counter() - inicio) * 1000
 
-        ts_recepcion = self.clock.receive(acuse.timestamp)
-        if self.registrar_eventos:
+        if acuse.receiver != destination or not acuse.ok:
+            raise ValueError("El acuse no confirma el destino solicitado")
+        if self.event_log is not None:
+            self.event_log.record("recepcion_acuse", id_mensaje, acuse.receiver, sender,
+                                  remote=acuse.timestamp)
+        else:
+            ts_recepcion = self.clock.receive(acuse.timestamp)
+        if self.registrar_eventos and self.event_log is None:
             registrar_evento(sender, "recepcion_acuse", ts_recepcion, id_mensaje,
                              acuse.receiver, sender)
-        registrar_latencia(tamano, run_number, attempt, latencia_ms, acuse.ok)
+        if self.event_log is None:
+            registrar_latencia(tamano, run_number, attempt, latencia_ms, acuse.ok)
         respuesta = {"receiver": acuse.receiver, "timestamp": acuse.timestamp, "ok": acuse.ok}
         return respuesta, latencia_ms
 

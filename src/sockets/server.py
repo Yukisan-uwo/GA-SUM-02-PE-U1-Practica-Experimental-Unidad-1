@@ -38,7 +38,10 @@ def serve_client(
     clock: LamportClock,
     quiet: bool = False,
     log_events: bool = True,
+    event_log=None,
 ) -> None:
+    if event_log is not None and event_log.clock is not clock:
+        raise ValueError("Servidor y registro deben compartir la misma instancia de reloj")
     message_number = 0
     with connection, connection.makefile("r", encoding="utf-8", newline="\n") as reader:
         writer = connection.makefile("w", encoding="utf-8", newline="\n")
@@ -57,16 +60,26 @@ def serve_client(
 
                 message_number += 1
                 message_id = f"{sender}-{message_number:06d}"
-                received_clock = clock.receive(timestamp)
-                if log_events:
+                if event_log is not None:
+                    message_id = request.get("id_mensaje")
+                    if request.get("corrida") != event_log.run:
+                        raise ValueError("La corrida no corresponde al servidor")
+                    received_clock = event_log.record(
+                        "recepcion_solicitud", message_id, sender, node, remote=timestamp)
+                else:
+                    received_clock = clock.receive(timestamp)
+                if log_events and event_log is None:
                     append_event(node, "recepcion_solicitud", received_clock, message_id, sender, node)
                 if not quiet:
                     print(f"RECEPCION {sender} -> {node}: reloj={received_clock}, bytes={len(message.encode('utf-8'))}")
 
                 # The acknowledgment is a new send event, so tick before sending it.
-                ack_clock = clock.tick()
+                ack_clock = (event_log.record("envio_acuse", message_id, node, sender)
+                             if event_log is not None else clock.tick())
                 response = {"receiver": node, "timestamp": ack_clock, "ok": True}
-                if log_events:
+                if event_log is not None:
+                    response["id_mensaje"] = message_id
+                if log_events and event_log is None:
                     append_event(node, "envio_acuse", ack_clock, message_id, node, sender)
                 writer.write(json.dumps(response, ensure_ascii=False, separators=(",", ":")) + "\n")
                 writer.flush()

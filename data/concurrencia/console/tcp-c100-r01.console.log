@@ -1,0 +1,30 @@
+nodo-B | PID=14773 | roger@omarchy | 2026-11-21T04:40:10.099300+00:00 | puerto=5001
+nodo-A | PID=14772 | roger@omarchy | 2026-11-21T04:40:10.105484+00:00 | puerto=5000
+nodo-C | PID=14774 | roger@omarchy | 2026-11-21T04:40:10.113018+00:00 | puerto=5002
+{
+  "valido": true,
+  "archivos": 3,
+  "eventos": 1200,
+  "pares_evaluados": 600,
+  "errores": [],
+  "ejemplo_relojes_iguales": {
+    "mecanismo": "TCP",
+    "corrida": "tcp-c100-r01",
+    "reloj": 1,
+    "eventos": [
+      {
+        "nodo": "nodo-A",
+        "secuencia": 1,
+        "evento": "envio_solicitud",
+        "id_mensaje": "tcp-c100-r01:nodo-A-000001"
+      },
+      {
+        "nodo": "nodo-B",
+        "secuencia": 1,
+        "evento": "envio_solicitud",
+        "id_mensaje": "tcp-c100-r01:nodo-B-000001"
+      }
+    ]
+  }
+}
+Datos de ejecución: /home/roger/UNIVERSIDAD/UNI SEM7/SISTEMAS DISTRIBUIDOS/GA-SUM - PE-U1/apoyo/resultados_concurrencia_mario/tcp-c100-r01

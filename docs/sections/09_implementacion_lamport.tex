@@ -33,16 +33,17 @@ El cliente y el servidor TCP de esta revisión importan la clase común, en luga
 de mantener implementaciones locales duplicadas. Conservan sus argumentos de
 ejecución y el formato JSON existente. El servidor y el cliente gRPC revisados
 también importan la clase común y el servidor incrementa antes de enviar el acuse.
-Esto unifica el algoritmo, pero los ejecutables actuales todavía crean instancias
-separadas para cliente y servidor. No constituyen por sí solos una arquitectura
-de tres procesos con servidor y cliente compartiendo reloj dentro de cada nodo.
+Los ejecutables individuales conservan su modo de uso anterior. El lanzador
+\path{analysis/run_lamport_experiment.py} crea, en cambio, tres procesos e inyecta
+la misma instancia de reloj en servidor y cliente de cada nodo. Los constructores
+rechazan un registro asociado a un reloj diferente del recibido por el adaptador.
 El registro TCP existente también protege con un bloqueo la creación de cabecera
 y la escritura de filas entre hilos del proceso. Este bloqueo evita escrituras
 simultáneas, pero no garantiza que el orden de las filas coincida con el orden
 de actualización de un reloj protegido por otro bloqueo independiente.
 
 \subsection{Registro e identificación de eventos}
-El componente propuesto en \path{src/common/event_log.py} implementa
+El componente integrado en \path{src/common/event_log.py} implementa
 \texttt{EventLog}. Su bloqueo engloba la actualización del reloj y la escritura
 del evento, de modo que los hilos del proceso no registren una marca obtenida
 por otra operación concurrente. El método devuelve exactamente la marca
@@ -74,12 +75,12 @@ rechaza archivos existentes para evitar mezclar ejecuciones. La secuencia local
 establece el orden del proceso; la hora UTC documenta cuándo se registró el
 evento y no se utiliza como prueba de causalidad.
 
-Este esquema corresponde al componente de registro preparado, no a los CSV
-que producen actualmente los adaptadores del equipo. Sus registros existentes
-no incluyen corrida, secuencia ni reloj remoto; el servidor gRPC reconstruye
-los identificadores mediante contadores por emisor y conexión. Para emplear el
-verificador completo se necesita integrar el registro y transmitir el ID real
-desde el cliente. No es válido completar los CSV antiguos con valores supuestos.
+Este esquema se activa al inyectar \texttt{EventLog}. TCP transmite el ID y la
+corrida en campos JSON adicionales; gRPC los transmite en metadata. Los modos
+individuales anteriores conservan sus registros originales. Durante la prueba
+integrada no se escriben los CSV de latencia del benchmark ni se mezclan sus
+datos con esta captura funcional. Los registros antiguos no se completan con
+valores supuestos para hacerlos compatibles con el verificador.
 
 \subsection{Concurrencia, validación y límites}
 Las pruebas automatizadas comprueban actualizaciones sin pérdida entre hilos,
@@ -99,6 +100,16 @@ una política explícita de identificación y, si se pretende evitar efectos
 duplicados, deduplicación en el receptor. El componente de reloj no implementa
 esa política ni detecta fallos de nodos.
 
-\pendiente{Integrar estos componentes en ambos transportes, ejecutar las pruebas
-de tres clientes y fallos de nodos, y documentar los resultados reales. Las
-pruebas unitarias no acreditan todavía esas ejecuciones.}
+El lanzador valida la captura al terminar y genera \texttt{SHA256SUMS} para los
+CSV y archivos de contexto de esa ejecución. Una corrida fallida se conserva
+como incompleta, no se presenta como una verificación aprobada ni se sobrescribe.
+
+Las capturas automatizadas de concurrencia y sus resúmenes reproducibles se
+documentan en la sección de verificación. El script
+\path{analysis/summarize_concurrency.py} comprueba nuevamente hashes y reglas
+antes de generar sus conteos y ejemplos. Esas capturas no se mezclan con las
+dos mil mediciones secuenciales de RTT.
+
+\pendiente{Adjuntar las capturas personales y analizar fallos de nodos. Las
+ejecuciones automatizadas no sustituyen evidencias de participación humana ni
+las mediciones repetidas de latencia y rendimiento.}
