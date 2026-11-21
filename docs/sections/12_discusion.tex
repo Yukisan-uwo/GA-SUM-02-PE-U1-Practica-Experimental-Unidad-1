@@ -90,8 +90,9 @@ El contrato garantiza los tipos, por lo que el servidor gRPC no necesita las com
 
 Esta comodidad tiene un costo (tabla~\ref{tab:estadisticas_rtt}): con 100 bytes, la latencia media de gRPC fue unas 4,5 veces la de TCP (0,547\,ms frente a 0,122\,ms). Con 10\,KiB, TCP subió un 61\,\% y gRPC solo un 3\,\%, lo que sugiere que el costo adicional de gRPC es principalmente fijo por llamada.
 
-\pendiente{Joseph: análisis de facilidad de desarrollo,
-tipado y manejo de errores desde TCP.}
+Desde TCP, la comunicación fue directa de implementar: el cliente abre una conexión con el servidor y la reutiliza para enviar varios mensajes. Sin embargo, como TCP transmite un flujo de bytes, tuvimos que definir en el código cómo separar cada solicitud. Para eso usamos objetos JSON codificados en UTF-8 y un salto de línea al final de cada mensaje. El cliente también construye y analiza manualmente el JSON, mientras que el servidor valida los campos recibidos. Esto nos dio control sobre el intercambio, pero exigió mantener el mismo formato y las mismas reglas en ambos extremos.
+
+El tipado queda a cargo de esas validaciones: por ejemplo, se comprueba que el emisor y el mensaje sean textos, que la marca de tiempo sea un entero y que el acuse tenga los campos esperados. En el manejo de errores, el cliente distingue situaciones como un tiempo de espera agotado, una conexión rechazada u otro error de comunicación. Si la solicitud recibida no tiene el formato esperado, el servidor no devuelve un error estructurado para la aplicación y puede cerrar esa conexión. En esta implementación, TCP requirió más trabajo manual para definir el formato, validar los datos y tratar los errores que la interfaz gRPC generada a partir de su contrato.
 
 \subsection{Contraste con la hipótesis inicial}
 
