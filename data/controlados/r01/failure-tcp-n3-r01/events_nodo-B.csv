@@ -1,0 +1,8 @@
+mecanismo,corrida,nodo,secuencia,evento,reloj,reloj_remoto,hora_real,id_mensaje,origen,destino
+TCP,failure-tcp-n3-r01,nodo-B,1,recepcion_solicitud,2,1,2026-11-21T19:41:34.613005+00:00,failure-tcp-n3-r01:nodo-A-000001,nodo-A,nodo-B
+TCP,failure-tcp-n3-r01,nodo-B,2,envio_acuse,3,,2026-11-21T19:41:34.613085+00:00,failure-tcp-n3-r01:nodo-A-000001,nodo-B,nodo-A
+TCP,failure-tcp-n3-r01,nodo-B,3,envio_solicitud,4,,2026-11-21T19:41:34.616123+00:00,failure-tcp-n3-r01:nodo-B-000001,nodo-B,nodo-C
+TCP,failure-tcp-n3-r01,nodo-B,4,recepcion_acuse,7,6,2026-11-21T19:41:34.617477+00:00,failure-tcp-n3-r01:nodo-B-000001,nodo-C,nodo-B
+TCP,failure-tcp-n3-r01,nodo-B,5,envio_solicitud,8,,2026-11-21T19:41:34.621060+00:00,failure-tcp-n3-r01:nodo-B-000002,nodo-B,nodo-C
+TCP,failure-tcp-n3-r01,nodo-B,6,recepcion_solicitud,9,5,2026-11-21T19:41:34.621732+00:00,failure-tcp-n3-r01:nodo-A-000002,nodo-A,nodo-B
+TCP,failure-tcp-n3-r01,nodo-B,7,envio_acuse,10,,2026-11-21T19:41:34.621820+00:00,failure-tcp-n3-r01:nodo-A-000002,nodo-B,nodo-A

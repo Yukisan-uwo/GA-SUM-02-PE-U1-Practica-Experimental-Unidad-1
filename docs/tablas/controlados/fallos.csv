@@ -1,0 +1,3 @@
+mecanismo,solicitudes_completas,intento_fallido,envios_sin_recepcion,eventos,reloj_antes,reloj_despues,error,canal_sano_posterior,fuente
+gRPC,3,1,1,13,7,8,UNAVAILABLE,True,data/controlados/personal-20261121-152127/failure-grpc-n3-r01
+TCP,3,1,1,13,7,8,ConnectionError,True,data/controlados/personal-20261121-152127/failure-tcp-n3-r01

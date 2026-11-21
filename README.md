@@ -106,3 +106,23 @@ python analysis/report_twenty_exchanges.py --grpc-capture data/lamport20/grpc-20
 
 Si la carpeta de salida existe, elegir otra. Estas corridas no sustituyen ni se
 agregan a las 2000 mediciones RTT ni a las capturas de carga de 300 solicitudes.
+
+## Caída controlada y número de nodos
+
+Los protocolos, alcances y comandos están en
+[docs/PRUEBAS_CONTROLADAS.md](docs/PRUEBAS_CONTROLADAS.md).
+Resultados generados desde la sesión personal documentada:
+[docs/tablas/controlados/resumen.md](docs/tablas/controlados/resumen.md).
+Capturas y procedencia: [docs/EVIDENCIAS_CONTROLADAS.md](docs/EVIDENCIAS_CONTROLADAS.md).
+Los registros asistidos anteriores se conservan como conjunto separado, sin mezclarlos.
+
+Para una nueva ejecución personal, con carpeta todavía inexistente:
+
+```bash
+python analysis/run_controlled_checks.py --output data/controlados/personal-r02 --origin personal
+python analysis/analyze_controlled_checks.py data/controlados/personal-r02 --output analysis/controlados_personal_r02
+```
+
+La prueba termina deliberadamente el proceso C de su propio grupo de prueba;
+no termina servidores ajenos. Usa puertos libres y nuevos procesos. No modificar
+los CSV incompletos: el envío fallido es parte de la evidencia, no un dato a borrar.

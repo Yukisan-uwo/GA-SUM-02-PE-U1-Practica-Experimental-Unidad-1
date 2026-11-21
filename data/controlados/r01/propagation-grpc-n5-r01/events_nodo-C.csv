@@ -1,0 +1,5 @@
+mecanismo,corrida,nodo,secuencia,evento,reloj,reloj_remoto,hora_real,id_mensaje,origen,destino
+gRPC,propagation-grpc-n5-r01,nodo-C,1,recepcion_solicitud,5,4,2026-11-21T19:41:41.249696+00:00,propagation-grpc-n5-r01:nodo-B-000001,nodo-B,nodo-C
+gRPC,propagation-grpc-n5-r01,nodo-C,2,envio_acuse,6,,2026-11-21T19:41:41.249762+00:00,propagation-grpc-n5-r01:nodo-B-000001,nodo-C,nodo-B
+gRPC,propagation-grpc-n5-r01,nodo-C,3,envio_solicitud,7,,2026-11-21T19:41:41.256350+00:00,propagation-grpc-n5-r01:nodo-C-000001,nodo-C,nodo-D
+gRPC,propagation-grpc-n5-r01,nodo-C,4,recepcion_acuse,10,9,2026-11-21T19:41:41.257508+00:00,propagation-grpc-n5-r01:nodo-C-000001,nodo-D,nodo-C

@@ -105,6 +105,44 @@ de hashes se detallan en \path{docs/tablas/lamport20/resumen.md}. Las capturas
 acreditan estas ejecuciones funcionales, no la ejecución manual de la prueba
 de trescientas solicitudes ni el desempeño en la demostración.
 
+\subsection{Caída controlada y conservación del envío fallido}
+Se añadió una prueba independiente para TCP y gRPC. Con A, B y C como procesos,
+se completan A$\rightarrow$B y B$\rightarrow$C; después el coordinador termina
+el proceso C y espera su salida antes de ordenar un nuevo envío B$\rightarrow$C.
+Finalmente A$\rightarrow$B vuelve a completar un intercambio. La prueba documenta
+una caída entre intercambios, no durante un RPC activo ni una partición de red.
+
+Los CSV conservan el envío de B sin recepción correspondiente en C. El reloj no
+retrocede ni se elimina el evento para hacer pasar el verificador. La comprobación
+estricta de intercambios completos produce el error esperado por ese ID; el
+analizador específico exige que sea el único intercambio incompleto y que todas
+las reglas locales y parejas completas sigan siendo válidas. También contrasta
+la marca del envío con el reloj registrado en el resultado del intento fallido.
+
+\begin{table}[htbp]
+\centering\small
+\input{tablas/controlados/fallos.tex}
+\caption{Prueba de caída: solicitudes completas, intento fallido y envío huérfano.}
+\label{tab:fallo-controlado}
+\end{table}
+
+Los errores concretos del transporte, el PID terminado y su código de salida se
+conservan en \texttt{result.json}. La respuesta posterior del enlace A--B demuestra
+que esos dos procesos continuaron comunicándose; no demuestra recuperación de C
+ni detección infalible de fallos. No se implementan reintentos o persistencia del
+contador tras reiniciar. El detalle del protocolo figura en
+\path{docs/PRUEBAS_CONTROLADAS.md}; los datos que generan esta tabla están en
+\path{data/controlados/personal-20261121-152127/}.
+
+Roger ejecutó esta sesión el 21 de noviembre de 2026 a las 15:21:27 UTC$-05{:}00$
+y conservó cuatro capturas y un log, descritos en \path{docs/EVIDENCIAS_CONTROLADAS.md}.
+Las capturas de consulta del resultado y de comprobación de hashes fueron tomadas
+después de la ejecución; no se presentan como nuevas corridas. Código, preparación
+y verificación tuvieron asistencia de IA. El conjunto asistido anterior se conserva
+separadamente en \path{data/controlados/r01/} y no se mezcla con estas mediciones.
+La variación del número de nodos se presenta en el anexo, sin interpretar Lamport
+como sincronización física.
+
 \subsection{Límites y evidencias pendientes}
 El éxito de estas capturas acredita consistencia del reloj sobre los eventos
 registrados y entrega de los acuses bajo esa carga, no ausencia de todos los
@@ -112,7 +150,7 @@ fallos posibles. Solo hay una captura por condición de concurrencia y el arranq
 está sincronizado; no se extraen conclusiones estadísticas de rendimiento ni
 se mezclan las máquinas Linux y Windows en una comparación de latencias.
 
-\pendiente{Documentar por separado la prueba de caída de nodo y la evidencia
-personal de carga de trescientas solicitudes. Las capturas personales de veinte
-intercambios ya están identificadas; no presentar tests o ejecuciones asistidas
-de otra condición como participación humana acreditada.}
+\pendiente{Añadir la evidencia personal de carga de trescientas solicitudes.
+Las capturas de veinte intercambios y de pruebas controladas ya están identificadas;
+no presentar tests o ejecuciones asistidas de otra condición como participación
+humana acreditada.}

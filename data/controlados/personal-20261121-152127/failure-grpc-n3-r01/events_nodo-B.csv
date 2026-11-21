@@ -1,0 +1,8 @@
+mecanismo,corrida,nodo,secuencia,evento,reloj,reloj_remoto,hora_real,id_mensaje,origen,destino
+gRPC,failure-grpc-n3-r01,nodo-B,1,recepcion_solicitud,2,1,2026-11-21T20:21:31.133937+00:00,failure-grpc-n3-r01:nodo-A-000001,nodo-A,nodo-B
+gRPC,failure-grpc-n3-r01,nodo-B,2,envio_acuse,3,,2026-11-21T20:21:31.133984+00:00,failure-grpc-n3-r01:nodo-A-000001,nodo-B,nodo-A
+gRPC,failure-grpc-n3-r01,nodo-B,3,envio_solicitud,4,,2026-11-21T20:21:31.143443+00:00,failure-grpc-n3-r01:nodo-B-000001,nodo-B,nodo-C
+gRPC,failure-grpc-n3-r01,nodo-B,4,recepcion_acuse,7,6,2026-11-21T20:21:31.144812+00:00,failure-grpc-n3-r01:nodo-B-000001,nodo-C,nodo-B
+gRPC,failure-grpc-n3-r01,nodo-B,5,envio_solicitud,8,,2026-11-21T20:21:31.148329+00:00,failure-grpc-n3-r01:nodo-B-000002,nodo-B,nodo-C
+gRPC,failure-grpc-n3-r01,nodo-B,6,recepcion_solicitud,9,5,2026-11-21T20:21:31.150369+00:00,failure-grpc-n3-r01:nodo-A-000002,nodo-A,nodo-B
+gRPC,failure-grpc-n3-r01,nodo-B,7,envio_acuse,10,,2026-11-21T20:21:31.150410+00:00,failure-grpc-n3-r01:nodo-A-000002,nodo-B,nodo-A

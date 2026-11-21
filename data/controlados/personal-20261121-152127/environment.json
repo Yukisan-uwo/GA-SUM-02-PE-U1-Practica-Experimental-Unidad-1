@@ -1,0 +1,31 @@
+{
+  "utc": "2026-11-21T20:21:27.163442+00:00",
+  "user": "roger",
+  "hostname": "omarchy",
+  "os": "Linux-7.2.15-1-omarchy-x86_64-with-glibc2.44",
+  "python": "3.14.8 (main, Oct  2 2026, 10:23:31) [GCC 16.2.1 20260810]",
+  "origin_declaration": "personal",
+  "libraries": {
+    "grpcio": "1.85.1",
+    "grpcio-tools": "1.85.1",
+    "protobuf": "7.36.2",
+    "pandas": "3.1.1",
+    "matplotlib": "3.11.2"
+  },
+  "processor": "Intel(R) Core(TM) i7-7700 CPU @ 3.60GHz",
+  "memory_bytes": 33521360896,
+  "warning": "Origen declarado, no certificación de participación humana",
+  "configuration": {
+    "output": "data/controlados/personal-20261121-152127",
+    "mode": "all",
+    "mechanism": "both",
+    "nodes": [
+      2,
+      3,
+      5
+    ],
+    "repetitions": 5,
+    "timeout": 2,
+    "origin": "personal"
+  }
+}

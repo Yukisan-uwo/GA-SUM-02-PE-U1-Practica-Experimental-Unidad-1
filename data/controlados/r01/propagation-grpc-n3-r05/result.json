@@ -1,0 +1,56 @@
+{
+  "ok": true,
+  "mode": "propagation",
+  "run_id": "propagation-grpc-n3-r05",
+  "mechanism": "grpc",
+  "nodes": {
+    "nodo-A": {
+      "ok": true,
+      "node": "nodo-A",
+      "pid": 9970,
+      "port": 35813
+    },
+    "nodo-B": {
+      "ok": true,
+      "node": "nodo-B",
+      "pid": 9971,
+      "port": 39913
+    },
+    "nodo-C": {
+      "ok": true,
+      "node": "nodo-C",
+      "pid": 9972,
+      "port": 33871
+    }
+  },
+  "commands": [
+    {
+      "ok": true,
+      "node": "nodo-A",
+      "clock_before": 0,
+      "clock_after": 4,
+      "receiver": "nodo-B",
+      "ack_clock": 3,
+      "elapsed_ns": 9921959,
+      "origin": "nodo-A",
+      "destination": "nodo-B",
+      "attempt": 1
+    },
+    {
+      "ok": true,
+      "node": "nodo-B",
+      "clock_before": 3,
+      "clock_after": 7,
+      "receiver": "nodo-C",
+      "ack_clock": 6,
+      "elapsed_ns": 9580896,
+      "origin": "nodo-B",
+      "destination": "nodo-C",
+      "attempt": 1
+    }
+  ],
+  "node_count": 3,
+  "repetition": 5,
+  "chain_elapsed_ns": 19961381,
+  "metric": "N-1 intercambios secuenciales coordinados; incluye IPC, conexiones y acuses"
+}

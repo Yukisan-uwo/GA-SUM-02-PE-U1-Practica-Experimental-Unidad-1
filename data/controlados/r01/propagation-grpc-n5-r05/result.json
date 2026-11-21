@@ -1,0 +1,92 @@
+{
+  "ok": true,
+  "mode": "propagation",
+  "run_id": "propagation-grpc-n5-r05",
+  "mechanism": "grpc",
+  "nodes": {
+    "nodo-A": {
+      "ok": true,
+      "node": "nodo-A",
+      "pid": 10359,
+      "port": 35961
+    },
+    "nodo-B": {
+      "ok": true,
+      "node": "nodo-B",
+      "pid": 10360,
+      "port": 41899
+    },
+    "nodo-C": {
+      "ok": true,
+      "node": "nodo-C",
+      "pid": 10361,
+      "port": 39361
+    },
+    "nodo-D": {
+      "ok": true,
+      "node": "nodo-D",
+      "pid": 10362,
+      "port": 33803
+    },
+    "nodo-E": {
+      "ok": true,
+      "node": "nodo-E",
+      "pid": 10363,
+      "port": 33377
+    }
+  },
+  "commands": [
+    {
+      "ok": true,
+      "node": "nodo-A",
+      "clock_before": 0,
+      "clock_after": 4,
+      "receiver": "nodo-B",
+      "ack_clock": 3,
+      "elapsed_ns": 10457918,
+      "origin": "nodo-A",
+      "destination": "nodo-B",
+      "attempt": 1
+    },
+    {
+      "ok": true,
+      "node": "nodo-B",
+      "clock_before": 3,
+      "clock_after": 7,
+      "receiver": "nodo-C",
+      "ack_clock": 6,
+      "elapsed_ns": 9902570,
+      "origin": "nodo-B",
+      "destination": "nodo-C",
+      "attempt": 1
+    },
+    {
+      "ok": true,
+      "node": "nodo-C",
+      "clock_before": 6,
+      "clock_after": 10,
+      "receiver": "nodo-D",
+      "ack_clock": 9,
+      "elapsed_ns": 6884587,
+      "origin": "nodo-C",
+      "destination": "nodo-D",
+      "attempt": 1
+    },
+    {
+      "ok": true,
+      "node": "nodo-D",
+      "clock_before": 9,
+      "clock_after": 13,
+      "receiver": "nodo-E",
+      "ack_clock": 12,
+      "elapsed_ns": 7138346,
+      "origin": "nodo-D",
+      "destination": "nodo-E",
+      "attempt": 1
+    }
+  ],
+  "node_count": 5,
+  "repetition": 5,
+  "chain_elapsed_ns": 35056835,
+  "metric": "N-1 intercambios secuenciales coordinados; incluye IPC, conexiones y acuses"
+}

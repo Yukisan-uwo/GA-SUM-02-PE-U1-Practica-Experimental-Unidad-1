@@ -1,0 +1,38 @@
+{
+  "ok": true,
+  "mode": "propagation",
+  "run_id": "propagation-tcp-n2-r04",
+  "mechanism": "tcp",
+  "nodes": {
+    "nodo-A": {
+      "ok": true,
+      "node": "nodo-A",
+      "pid": 9452,
+      "port": 36777
+    },
+    "nodo-B": {
+      "ok": true,
+      "node": "nodo-B",
+      "pid": 9453,
+      "port": 57357
+    }
+  },
+  "commands": [
+    {
+      "ok": true,
+      "node": "nodo-A",
+      "clock_before": 0,
+      "clock_after": 4,
+      "receiver": "nodo-B",
+      "ack_clock": 3,
+      "elapsed_ns": 1933212,
+      "origin": "nodo-A",
+      "destination": "nodo-B",
+      "attempt": 1
+    }
+  ],
+  "node_count": 2,
+  "repetition": 4,
+  "chain_elapsed_ns": 2118102,
+  "metric": "N-1 intercambios secuenciales coordinados; incluye IPC, conexiones y acuses"
+}

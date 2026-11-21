@@ -1,0 +1,5 @@
+mecanismo,corrida,nodo,secuencia,evento,reloj,reloj_remoto,hora_real,id_mensaje,origen,destino
+TCP,propagation-tcp-n3-r02,nodo-B,1,recepcion_solicitud,2,1,2026-11-21T19:41:36.234482+00:00,propagation-tcp-n3-r02:nodo-A-000001,nodo-A,nodo-B
+TCP,propagation-tcp-n3-r02,nodo-B,2,envio_acuse,3,,2026-11-21T19:41:36.234557+00:00,propagation-tcp-n3-r02:nodo-A-000001,nodo-B,nodo-A
+TCP,propagation-tcp-n3-r02,nodo-B,3,envio_solicitud,4,,2026-11-21T19:41:36.236566+00:00,propagation-tcp-n3-r02:nodo-B-000001,nodo-B,nodo-C
+TCP,propagation-tcp-n3-r02,nodo-B,4,recepcion_acuse,7,6,2026-11-21T19:41:36.237128+00:00,propagation-tcp-n3-r02:nodo-B-000001,nodo-C,nodo-B

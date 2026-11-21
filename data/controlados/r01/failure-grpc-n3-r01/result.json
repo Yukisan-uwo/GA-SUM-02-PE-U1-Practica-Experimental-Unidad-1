@@ -1,0 +1,85 @@
+{
+  "ok": true,
+  "mode": "failure",
+  "run_id": "failure-grpc-n3-r01",
+  "mechanism": "grpc",
+  "nodes": {
+    "nodo-A": {
+      "ok": true,
+      "node": "nodo-A",
+      "pid": 9572,
+      "port": 36909
+    },
+    "nodo-B": {
+      "ok": true,
+      "node": "nodo-B",
+      "pid": 9573,
+      "port": 39321
+    },
+    "nodo-C": {
+      "ok": true,
+      "node": "nodo-C",
+      "pid": 9574,
+      "port": 43035
+    }
+  },
+  "killed": {
+    "node": "nodo-C",
+    "pid": 9574,
+    "exitcode": -15,
+    "utc": "2026-11-21T19:41:38.783652+00:00"
+  },
+  "commands": [
+    {
+      "ok": true,
+      "node": "nodo-A",
+      "clock_before": 0,
+      "clock_after": 4,
+      "receiver": "nodo-B",
+      "ack_clock": 3,
+      "elapsed_ns": 8104493,
+      "origin": "nodo-A",
+      "destination": "nodo-B",
+      "attempt": 1
+    },
+    {
+      "ok": true,
+      "node": "nodo-B",
+      "clock_before": 3,
+      "clock_after": 7,
+      "receiver": "nodo-C",
+      "ack_clock": 6,
+      "elapsed_ns": 8148960,
+      "origin": "nodo-B",
+      "destination": "nodo-C",
+      "attempt": 1
+    },
+    {
+      "ok": false,
+      "node": "nodo-B",
+      "phase": "send",
+      "clock_before": 7,
+      "clock_after": 8,
+      "error": "_InactiveRpcError",
+      "status": "UNAVAILABLE",
+      "detail": "<_InactiveRpcError of RPC that terminated with:\n\tstatus = StatusCode.UNAVAILABLE\n\tdetails = \"failed to connect to all addresses; last error: UNKNOWN: ipv4:127.0.0.1:43035: Failed to connect to remote host: Connection refused\"\n\tdebug_error_string = \"UNAVAILABLE:failed to connect to all addresses; last error: UNKNOWN: ipv4:127.0.0.1:43035: Failed to connect to remote host: Connection refused\"\n>",
+      "elapsed_ns": 674148,
+      "origin": "nodo-B",
+      "destination": "nodo-C",
+      "attempt": 2
+    },
+    {
+      "ok": true,
+      "node": "nodo-A",
+      "clock_before": 4,
+      "clock_after": 11,
+      "receiver": "nodo-B",
+      "ack_clock": 10,
+      "elapsed_ns": 1193270,
+      "origin": "nodo-A",
+      "destination": "nodo-B",
+      "attempt": 2
+    }
+  ],
+  "expected_orphan": "failure-grpc-n3-r01:nodo-B-000002"
+}

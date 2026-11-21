@@ -1,10 +1,35 @@
 % Cuatro preguntas OBLIGATORIAS (Anexos, página 4 de la guía).
-
 \subsection{Efecto del número de nodos sobre la propagación de relojes}
-
 Los relojes de Lamport no convergen a un mismo valor ni miden el tiempo físico. Cada nodo incrementa su contador ante eventos locales y envíos; al recibir un mensaje, actualiza su valor con la regla $L=\max(L_{\mathrm{local}},L_{\mathrm{recibido}})+1$. Por eso, aumentar el número de nodos no cambia la regla del reloj. Puede añadir más eventos y saltos de comunicación antes de que una marca influya en otro nodo, pero el efecto depende de la topología, la carga y los mensajes intercambiados; no solo de la cantidad de nodos.
 
-En las corridas funcionales del equipo se mantuvieron tres nodos en anillo. En TCP y gRPC, las veinte solicitudes completaron sus acuses sin errores causales; los relojes finales fueron 28 para nodo-A, 28 para nodo-B y 27 para nodo-C. En las pruebas concurrentes del equipo se procesaron 300 solicitudes totales por condición, distribuidas entre los tres nodos, y el verificador no encontró errores causales. No se compararon diferentes cantidades de nodos ni se midió un tiempo de convergencia. Por tanto, estos resultados respaldan el orden causal para las configuraciones probadas, pero no permiten cuantificar cómo cambiaría el tiempo al agregar nodos.
+En las corridas funcionales del equipo se mantuvieron tres nodos en anillo. En TCP y gRPC, las veinte solicitudes completaron sus acuses sin errores causales; los relojes finales fueron 28 para nodo-A, 28 para nodo-B y 27 para nodo-C. En las pruebas concurrentes del equipo se procesaron 300 solicitudes totales por condición, distribuidas entre los tres nodos, y el verificador no encontró errores causales reportados. Esas corridas no variaban el número de nodos. Para responder cuantitativamente esta pregunta se añadió la siguiente prueba independiente de una cadena causal.
+
+Se evaluaron 2, 3 y 5 nodos, con cinco repeticiones por mecanismo y procesos nuevos
+en cada repetición. Una vez disponibles los servidores, el coordinador midió con
+\path{time.perf_counter_ns()} la finalización de los $N-1$ intercambios de la
+cadena, incluidos sus acuses. El analizador comprueba la recepción anterior al
+siguiente envío en cada nodo intermedio y genera la tabla desde los datos:
+
+\begin{table}[htbp]
+\centering\small
+\input{tablas/controlados/propagacion.tex}
+\caption{Duración del recorrido causal coordinado, no sincronización física.}
+\label{tab:propagacion-nodos}
+\end{table}
+
+En esta topología, aumentar $N$ también aumenta el número de saltos y operaciones.
+La tabla describe ese costo conjunto; no permite atribuirlo exclusivamente al
+número de procesos o al transporte. El intervalo incluye IPC, establecimiento
+de conexiones y acuses; no es una medición aislada de latencia de red. No se
+descartó calentamiento en esta prueba adicional, que no sustituye el protocolo
+del benchmark de cien envíos. Con cinco muestras por condición y una sola máquina,
+los resultados no demuestran una ley general ni crecimiento necesariamente lineal.
+
+Los CSV, las duraciones originales y el entorno se conservan en
+\path{data/controlados/personal-20261121-152127/}; el resumen reproducible está en
+\path{docs/tablas/controlados/resumen.md}. La sesión fue ejecutada por Roger y está
+documentada en \path{docs/EVIDENCIAS_CONTROLADAS.md}. El código y la preparación
+tuvieron asistencia de IA; los registros asistidos previos se conservan por separado.
 
 \subsection{Selección de sockets TCP o gRPC en el PFC y relación con CAP}
 
