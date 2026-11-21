@@ -1,0 +1,4 @@
+data/latency_sockets.csv -text
+data/runs_sockets.csv -text
+data/latency_grpc.csv -text
+data/runs_grpc.csv -text
