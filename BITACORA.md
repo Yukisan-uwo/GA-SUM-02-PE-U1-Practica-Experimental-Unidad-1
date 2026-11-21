@@ -138,3 +138,11 @@
 - **Problema encontrado:** Las tablas y figuras de la sección 08 se movían a otras partes del documento (una figura quedó en la 4.3), y una cita atribuía a un artículo algo que no se pudo verificar. Además, mi conclusión tenía un error de tipeo.
 - **Solución y comprobación:** Fijé las tablas y figuras para que queden después del párrafo que las menciona y lo comprobé compilando en TeXstudio. Cambié la cita por la documentación oficial de gRPC y el artículo de Niswar, que sí lo respaldan. El error de la conclusión lo corregí desde GitHub.
 - **Tiempo dedicado:** 2 horas 30 min.
+
+### 2026-11-20 · Mario Zambrano
+- **Integrantes presentes:** Mario Zambrano.
+- **Commit(s):** `95893c0` — Fundamentos de fallos, seguridad y teorema CAP.
+- **Qué se hizo:** Desarrollé la sección 05 del informe, donde expliqué los principales tipos de fallos en sistemas distribuidos, su detección y recuperación, los conceptos de JWT y OAuth 2.0, y el teorema CAP. También relacioné estos fundamentos con las características y limitaciones de las implementaciones TCP y gRPC realizadas en la práctica. Para respaldar el contenido, revisé artículos científicos y actualicé las referencias bibliográficas del documento.
+- **Problema encontrado:** Ninguno.
+- **Solución y comprobación:** Todo bien.
+- **Tiempo dedicado:** 2 horas y 16 minutos.
