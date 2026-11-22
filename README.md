@@ -85,11 +85,11 @@ pdflatex main.tex
 pdflatex main.tex
 ```
 
-El informe continúa en borrador mientras haya apartados y resultados pendientes.
+La versión final compilada del informe está en `docs/main.pdf`.
 
 ## Video
 
-Pendiente: enlace al video del equipo con participación de todos los integrantes.
+Video de respaldo con la participación de los cuatro integrantes: <https://www.youtube.com/watch?v=V7xLDmiJep4>
 
 ## Corridas personales de veinte intercambios
 
@@ -137,4 +137,4 @@ Datos en `data/concurrencia/personal300-20261121-175920/`; resúmenes derivados 
 Las cinco capturas, logs, procedencia y reproducción se describen en
 [Evidencias personales de carga](docs/EVIDENCIAS_CARGA_300.md).
 Las corridas asistidas anteriores permanecen separadas. Esta sesión no sustituye
-el video grupal, cuyo enlace sigue pendiente.
+el video grupal, cuyo enlace está en la sección [Video](#video).

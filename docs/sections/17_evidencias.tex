@@ -67,7 +67,7 @@ for f in $(find data docs/evidencias -name SHA256SUMS); do
 done
 \end{lstlisting}
 
-Los hashes de los cuatro CSV del benchmark se calcularon en Windows, con fin de línea CRLF. Para que coincidan en cualquier sistema operativo, el archivo \texttt{.gitattributes} indica a Git que conserve esos archivos sin convertir sus saltos de línea. El 21 de noviembre de 2026 se comprobaron, en un clon limpio del repositorio en Linux, los 77 manifiestos \texttt{SHA256SUMS} de \texttt{data/} y \texttt{docs/evidencias/}, sin ninguna falla.
+Los hashes de los cuatro CSV del benchmark se calcularon en Windows, con fin de línea CRLF. Para que coincidan en cualquier sistema operativo, el archivo \texttt{.gitattributes} indica a Git que conserve esos archivos sin convertir sus saltos de línea. El 21 de noviembre de 2026 se comprobaron, en un clon limpio del repositorio en Linux, los 85 manifiestos \texttt{SHA256SUMS} de \texttt{data/} y \texttt{docs/evidencias/}, sin ninguna falla.
 
 \subsection{Historial Git y reproducción del trabajo}
 
@@ -100,7 +100,7 @@ python src/grpc/client_grpc.py --sender nodo-A --receiver nodo-B --size-bytes 10
 
 En TCP el procedimiento es el mismo con \texttt{src/sockets/server.py --node nodo-B --port 5001} y \texttt{src/sockets/client.py}, que acepta las mismas opciones \texttt{--size-bytes}, \texttt{--count} y \texttt{--run}. Los clientes escriben sus registros en \texttt{data/}; esos archivos de demostración no forman parte de los datos entregados y no se suben al repositorio.
 
-\pendiente{Añadir la URL del video de 3 a 5 minutos, con rostro y voz de los cuatro integrantes, y enlazarlo también en README.md.}
+El video de respaldo, con la participación de los cuatro integrantes, está publicado en \url{https://www.youtube.com/watch?v=V7xLDmiJep4}. El mismo enlace figura en la sección \emph{Video} de \texttt{README.md}.
 
 \subsection{Evidencias de la contribución de Roger}
 Las corridas personales de veinte intercambios se conservan en
