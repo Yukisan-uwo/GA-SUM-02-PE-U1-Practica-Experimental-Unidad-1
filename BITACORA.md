@@ -213,3 +213,11 @@
 - **Problema encontrado:** El `git push` fue rechazado porque mi copia local estaba atrasada respecto al repositorio, y el `git pull --rebase` no avanzaba por cambios sin confirmar en `main.pdf` y en la sección 08. Además, al verificar los `SHA256SUMS`, los cuatro CSV del benchmark fallaban fuera de Windows.
 - **Solución y comprobación:** Descarté los cambios locales de `main.pdf` (generado por TeXstudio) y de la sección 08 (que ya estaba subida igual desde GitHub), hice `git pull --rebase` y luego `git push`. Lo de los hashes se lo reporté a Mario, que agregó un `.gitattributes`; comprobé después en un clon limpio que los 77 manifiestos dan OK.
 - **Tiempo dedicado:** más o menos 2 h.
+
+### 2026-11-21 · Joseph Calderón Saltos
+- **Integrantes presentes:** Joseph Calderón Saltos.
+- **Commit(s):** `499bbe2` — análisis TCP; `2865f68` y `98a595c` — conclusión individual; `6b9fbec` — respuestas del anexo; `74719d8` — aportes; `49376ba` — declaración de IA; `b4bfbbb` — actualización de concurrencia en fundamentos.
+- **Qué se hizo:** Completé mi análisis de TCP en la discusión, la conclusión individual y las respuestas del anexo. Registré mis aportes en el informe y actualicé los fundamentos para reflejar las pruebas concurrentes.
+- **Problema encontrado:** La conclusión había quedado en una ubicación incorrecta.
+- **Solución y comprobación:** La coloqué en el archivo de conclusiones individuales y eliminé la copia suelta. Revisé los cambios publicados en el repositorio.
+- **Tiempo dedicado:** 1 a 2 h
